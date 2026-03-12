@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>Sign up · ProjectMate</title>
+  </head>
+  <body class="pm-body">
+    <div class="pm-grid-overlay"></div>
+
+    <%- include('./partials/navbar') %>
+
+    <main class="pm-auth-shell">
+      <header class="pm-auth-header">
+        <h1 class="pm-auth-title">Create your account</h1>
+        <p class="pm-auth-subtitle">
+          Join builders, designers, and developers forming focused side‑project teams.
+        </p>
+      </header>
+
+      <section class="pm-auth-card">
+        <form action="/user/signup" method="POST" class="d-flex flex-column gap-3">
+          <div>
+            <label class="pm-form-label" for="name">Full name</label>
+            <input id="name" type="text" name="name" class="pm-input" placeholder="Alex Doe" required />
+          </div>
+
+          <div>
+            <label class="pm-form-label" for="email">Email</label>
+            <input id="email" type="email" name="email" class="pm-input" placeholder="you@example.com" required />
+          </div>
+
+          <div>
+            <label class="pm-form-label" for="password">Password</label>
+            <input id="password" type="password" name="password" class="pm-input" placeholder="Create a secure password" required />
+          </div>
+
+          <button type="submit" class="pm-btn pm-btn-primary w-100 justify-content-center mt-2">
+            Create account
+          </button>
+        </form>
+        <div class="pm-auth-footer">
+          Already have an account?
+          <a href="/login">Sign in</a>
+        </div>
+      </section>
+    </main>
+
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+  </body>
+</html>

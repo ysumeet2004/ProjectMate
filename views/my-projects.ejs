@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>My projects · ProjectMate</title>
+  </head>
+  <body class="pm-body">
+    <div class="pm-grid-overlay"></div>
+
+    <%- include('partials/navbar') %>
+
+    <main class="pm-page">
+      <header class="pm-page-header">
+        <div>
+          <h1 class="pm-page-title">My projects</h1>
+          <p class="pm-page-subtitle">
+            Open projects you own, with a quick view of applicants and the option to review them in detail.
+          </p>
+        </div>
+      </header>
+
+      <section class="pm-section-grid">
+        <% if (projects && projects.length > 0) { %>
+          <% projects.forEach(project => { %>
+            <article class="pm-card">
+              <div class="pm-card-header">
+                <div>
+                  <div class="pm-card-title"><%= project.title %></div>
+                  <div class="pm-card-subtitle"><%= project.domain %></div>
+                </div>
+                <div class="pm-tag">
+                  Applicants: <%= project.applicants.length %>
+                </div>
+              </div>
+              <p class="pm-card-subtitle mb-2"><%= project.desc %></p>
+              <p class="pm-card-subtitle">
+                <strong>Skills:</strong>
+                <%= (project.skills_req && typeof project.skills_req.join === 'function') 
+                    ? project.skills_req.join(', ') 
+                    : (project.skills_req || 'None specified') %>
+              </p>
+
+              <% if (project.applicants.length > 0) { %>
+                <div class="pm-list mt-2">
+                  <% project.applicants.slice(0, 3).forEach(app => { %>
+                    <div class="pm-list-row">
+                      <div class="pm-list-main"><%= app.user.name || app.user.email %></div>
+                      <div class="pm-list-meta"><%= new Date(app.appliedAt).toLocaleDateString() %></div>
+                    </div>
+                  <% }) %>
+                  <% if (project.applicants.length > 3) { %>
+                    <div class="pm-list-meta mt-1">
+                      +<%= project.applicants.length - 3 %> more applicants
+                    </div>
+                  <% } %>
+                </div>
+              <% } else { %>
+                <p class="pm-list-meta mt-2">No new applicants in the last few days.</p>
+              <% } %>
+
+              <div class="mt-3">
+                <a href="/project/<%= project._id %>/applicants" class="pm-btn pm-btn-ghost w-100 justify-content-center">
+                  View all applicants
+                </a>
+              </div>
+            </article>
+          <% }) %>
+        <% } else { %>
+          <article class="pm-card text-center">
+            <h2 class="pm-card-title mb-2">No open projects yet</h2>
+            <p class="pm-card-subtitle mb-3">
+              When you publish a project, it will appear here with applicants and quick stats.
+            </p>
+            <a href="/project/create" class="pm-btn pm-btn-primary justify-content-center mx-auto" style="max-width: 240px;">
+              Create a project
+            </a>
+          </article>
+        <% } %>
+      </section>
+    </main>
+
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+  </body>
+</html>

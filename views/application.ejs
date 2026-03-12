@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>My applications · ProjectMate</title>
+  </head>
+  <body class="pm-body">
+    <div class="pm-grid-overlay"></div>
+
+    <%- include('partials/navbar') %>
+
+    <main class="pm-page">
+      <header class="pm-page-header">
+        <div>
+          <h1 class="pm-page-title">My applications</h1>
+          <p class="pm-page-subtitle">
+            Applications from the last few days that are still open, with a quick view of status and owner.
+          </p>
+        </div>
+      </header>
+
+      <section class="pm-section-grid">
+        <% if (projects && projects.length > 0) { %>
+          <% projects.forEach(project => { %>
+            <article class="pm-card">
+              <div class="pm-card-header">
+                <div>
+                  <div class="pm-card-title"><%= project.title %></div>
+                  <div class="pm-card-subtitle"><%= project.domain %></div>
+                </div>
+                <div>
+                  <% if (project.applicationStatus === 'Pending') { %>
+                    <span class="pm-tag">Pending</span>
+                  <% } else { %>
+                    <span class="pm-tag" style="border-color: var(--pm-danger); color: var(--pm-danger);">Rejected</span>
+                  <% } %>
+                </div>
+              </div>
+              <p class="pm-card-subtitle mb-2"><%= project.desc %></p>
+              <p class="pm-card-subtitle">
+                <strong>Skills:</strong>
+                <%= (project.skills_req && typeof project.skills_req.join === 'function') ? project.skills_req.join(', ') : (project.skills_req || 'None specified') %>
+              </p>
+              <p class="pm-list-meta mt-2">
+                Project owner: <%= project.createdBy.name || project.createdBy.email %>
+              </p>
+            </article>
+          <% }) %>
+        <% } else { %>
+          <article class="pm-card text-center">
+            <h2 class="pm-card-title mb-2">No pending applications</h2>
+            <p class="pm-card-subtitle mb-3">
+              When you apply to projects, they’ll show up here with their latest status.
+            </p>
+            <a href="/project/find" class="pm-btn pm-btn-primary justify-content-center mx-auto" style="max-width: 220px;">
+              Find projects
+            </a>
+          </article>
+        <% } %>
+      </section>
+    </main>
+
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+  </body>
+</html>

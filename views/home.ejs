@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>ProjectMate · Collaborate like a pro</title>
+  </head>
+  <body class="pm-body">
+    <div class="pm-grid-overlay"></div>
+
+    <%- include('./partials/navbar') %>
+
+    <main class="pm-hero-shell">
+      <section>
+        <div class="pm-hero-kicker">
+          <span>New</span>
+          AI‑assisted matching for side‑projects
+        </div>
+
+        <h1 class="pm-hero-title">
+          Build projects like an
+          <span>institutional‑grade</span>
+          team.
+        </h1>
+
+        <p class="pm-hero-subtitle">
+          A focused workspace for discovering collaborators, tracking applications, and
+          running your project pipeline — with a calm, slightly‑purple visual system inspired
+          by modern trading dashboards.
+        </p>
+
+        <div class="pm-hero-actions">
+          <a href="/project/create" class="pm-btn pm-btn-primary">
+            Start a project
+          </a>
+          <a href="/project/find" class="pm-btn pm-btn-ghost">
+            Browse live projects
+          </a>
+        </div>
+
+        <div class="pm-hero-meta">
+          <div class="pm-hero-meta-stat">
+            <strong>Instant onboarding</strong><br />
+            Sign up and publish in under 2 minutes.
+          </div>
+          <div class="pm-hero-meta-stat">
+            <strong>Signal‑first profiles</strong><br />
+            Focus on skills, not endless bios.
+          </div>
+        </div>
+      </section>
+
+      <aside class="pm-hero-panel">
+        <div class="pm-hero-panel-card">
+          <div class="pm-hero-panel-header">
+            <div class="pm-hero-pill-strong">
+              Portfolio · Live pipeline
+            </div>
+            <div class="pm-hero-badge">
+              Last 30 days · Purple mode
+            </div>
+          </div>
+
+          <div class="pm-hero-stats-grid">
+            <div class="pm-hero-stat-card">
+              <div class="pm-hero-stat-label">Active projects</div>
+              <div class="pm-hero-stat-value">124</div>
+              <div class="pm-hero-stat-delta">+18 this week</div>
+            </div>
+            <div class="pm-hero-stat-card">
+              <div class="pm-hero-stat-label">Applicants</div>
+              <div class="pm-hero-stat-value">3.4k</div>
+              <div class="pm-hero-stat-delta">+12% engagement</div>
+            </div>
+            <div class="pm-hero-stat-card">
+              <div class="pm-hero-stat-label">Match rate</div>
+              <div class="pm-hero-stat-value">74%</div>
+              <div class="pm-hero-stat-delta">+9% QoQ</div>
+            </div>
+          </div>
+
+          <div class="pm-hero-footer-row">
+            <div>
+              Powered by curated, skill‑based matching instead of noisy job boards.
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <div class="pm-hero-avatar"></div>
+              <span>Project leads stay in control.</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+  </body>
+</html>
+

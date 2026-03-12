@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>History · ProjectMate</title>
+  </head>
+
+  <body class="pm-body">
+    <div class="pm-grid-overlay"></div>
+
+    <%- include('./partials/navbar') %>
+
+    <main class="pm-page">
+      <header class="pm-page-header">
+        <div>
+          <h1 class="pm-page-title">Project history</h1>
+          <p class="pm-page-subtitle">
+            Finished projects you led and collaborations you joined, so you can quickly revisit what you shipped.
+          </p>
+        </div>
+      </header>
+
+      <section class="pm-section-grid">
+        <article class="pm-card">
+          <div class="pm-card-header">
+            <div class="pm-card-title">Projects you created</div>
+          </div>
+          <% if (!createdHistory || createdHistory.length === 0) { %>
+            <p class="pm-list-meta mt-1">No project history available.</p>
+          <% } else { %>
+            <div class="pm-list mt-2">
+              <% createdHistory.forEach(project => { %>
+                <div class="pm-list-row">
+                  <div class="pm-list-main">
+                    <strong><%= project.title %></strong>
+                    <div class="pm-list-meta"><%= project.domain %></div>
+                  </div>
+                  <div class="text-end">
+                    <div class="pm-list-meta">
+                      Approved: <%= project.approved_user?.email || 'N/A' %>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+        </article>
+
+        <article class="pm-card">
+          <div class="pm-card-header">
+            <div class="pm-card-title">Projects you joined</div>
+          </div>
+          <% if (!appliedHistory || appliedHistory.length === 0) { %>
+            <p class="pm-list-meta mt-1">No application history available.</p>
+          <% } else { %>
+            <div class="pm-list mt-2">
+              <% appliedHistory.forEach(project => { %>
+                <div class="pm-list-row">
+                  <div class="pm-list-main">
+                    <strong><%= project.title %></strong>
+                    <div class="pm-list-meta"><%= project.domain %></div>
+                  </div>
+                  <div class="text-end">
+                    <div class="pm-list-meta">
+                      Owner: <%= project.createdBy?.email || 'N/A' %>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+        </article>
+      </section>
+    </main>
+
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+  </body>
+</html>

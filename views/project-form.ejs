@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>Create project · ProjectMate</title>
+  </head>
+  <body class="pm-body">
+    <div class="pm-grid-overlay"></div>
+
+    <%- include('./partials/navbar') %>
+
+    <main class="pm-page">
+      <header class="pm-page-header">
+        <div>
+          <h1 class="pm-page-title">Create a project</h1>
+          <p class="pm-page-subtitle">
+            Share a clear brief so the right collaborators can quickly understand your idea and skills needed.
+          </p>
+        </div>
+      </header>
+
+      <section class="pm-card">
+        <form action="/project/create" method="POST" class="d-flex flex-column gap-3">
+          <div>
+            <label for="title" class="pm-form-label">Project title</label>
+            <input type="text" id="title" name="title" class="pm-input" placeholder="Eg. AI-powered study partner" required />
+          </div>
+
+          <div>
+            <label for="description" class="pm-form-label">Description</label>
+            <textarea id="description" name="desc" class="pm-textarea" placeholder="In a few sentences, describe what you want to build and why now." required></textarea>
+            <p class="pm-field-help">Aim for 2–4 sentences with problem, solution, and what you’re looking for.</p>
+          </div>
+
+          <div>
+            <label for="skills" class="pm-form-label">Skills you’re looking for</label>
+            <input type="text" id="skills" name="skills" class="pm-input" placeholder="Eg. React, Node.js, Figma" required />
+          </div>
+
+          <div>
+            <label for="domain" class="pm-form-label">Domain</label>
+            <select id="domain" name="domain" class="pm-select" required>
+              <option value="" disabled selected>Select a domain</option>
+              <option value="Web Development">Web Development</option>
+              <option value="App Development">App Development</option>
+              <option value="AI/ML">AI / Machine Learning</option>
+              <option value="Blockchain">Blockchain</option>
+              <option value="Cybersecurity">Cybersecurity</option>
+              <option value="Game Development">Game Development</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <button type="submit" class="pm-btn pm-btn-primary mt-2 justify-content-center">
+            Publish project
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+  </body>
+</html>

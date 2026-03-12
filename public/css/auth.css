@@ -1,0 +1,137 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0b0014;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+.background {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  opacity: 0.4;
+}
+
+.image-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  margin: 20px;
+  box-shadow: 0 0 30px rgba(150, 50, 255, 0.3);
+}
+
+.image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 8s ease;
+}
+
+.image-card:hover img {
+  transform: scale(1.2);
+}
+
+/* --- BRAND NAME CENTERED --- */
+.brand-name {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 4rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 20px #b066ff, 0 0 30px #a94fff;
+  z-index: 3;
+  letter-spacing: 1px;
+}
+
+/* --- TAGLINE BELOW BRAND --- */
+.tagline {
+  position: absolute;
+  top: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  color: #d8b6ff;
+  text-shadow: 0 0 10px #a94fff;
+  letter-spacing: 2px;
+  z-index: 3;
+  font-weight: 400;
+}
+
+/* --- CENTERED AUTH BOX --- */
+.auth-container {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.auth-box {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 40px;
+  border-radius: 20px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(183, 80, 255, 0.6);
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px rgba(183, 80, 255, 0.4); }
+  to { box-shadow: 0 0 40px rgba(183, 80, 255, 0.8); }
+}
+
+.auth-box h2 {
+  margin-bottom: 20px;
+  color: #fff;
+  text-shadow: 0 0 10px #c77fff;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background-color: #1b012c;
+  color: #fff;
+  font-size: 14px;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #a94fff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.auth-box button:hover {
+  background-color: #b066ff;
+  transform: scale(1.03);
+}
+
+.auth-box a {
+  color: #c77fff;
+  text-decoration: none;
+}
+
+.auth-box a:hover {
+  text-decoration: underline;
+}

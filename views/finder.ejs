@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>Find projects · ProjectMate</title>
+  </head>
+  <body class="pm-body">
+    <div class="pm-grid-overlay"></div>
+
+    <%- include('./partials/navbar') %>
+
+    <main class="pm-page">
+      <header class="pm-page-header">
+        <div>
+          <h1 class="pm-page-title">Find projects</h1>
+          <p class="pm-page-subtitle">
+            Filter by domain and explore open projects looking for collaborators right now.
+          </p>
+        </div>
+      </header>
+
+      <!-- Search + Filter Form -->
+      <form action="/project/find" method="GET" class="pm-card mb-4">
+        <div class="d-flex flex-column flex-md-row gap-3 mb-3">
+          <div class="flex-grow-1">
+            <label class="pm-form-label" for="search">Search projects or creators</label>
+            <input
+              id="search"
+              type="text"
+              name="search"
+              class="pm-input"
+              placeholder="project id, project name, or @creator"
+              value="<%= typeof search !== 'undefined' ? search : '' %>"
+            />
+            <p class="pm-field-help">
+              Type a project name or ID. Prefix with <strong>@</strong> to search by creator name or email
+              (for example: <code>@sam</code>).
+            </p>
+          </div>
+          <div style="min-width: 220px;">
+            <label class="pm-form-label" for="primaryDomain">Quick domain filter</label>
+            <select id="primaryDomain" name="primaryDomain" class="pm-select">
+              <option value="all">All domains</option>
+              <option value="Web Development" <%= primaryDomain === 'Web Development' ? 'selected' : '' %>>Web Development</option>
+              <option value="App Development" <%= primaryDomain === 'App Development' ? 'selected' : '' %>>App Development</option>
+              <option value="AI/ML" <%= primaryDomain === 'AI/ML' ? 'selected' : '' %>>AI/ML</option>
+              <option value="Blockchain" <%= primaryDomain === 'Blockchain' ? 'selected' : '' %>>Blockchain</option>
+              <option value="Cybersecurity" <%= primaryDomain === 'Cybersecurity' ? 'selected' : '' %>>Cybersecurity</option>
+              <option value="Game Development" <%= primaryDomain === 'Game Development' ? 'selected' : '' %>>Game Development</option>
+              <option value="Other" <%= primaryDomain === 'Other' ? 'selected' : '' %>>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="pm-btn pm-btn-primary mt-3 justify-content-center">
+          Apply filters
+        </button>
+      </form>
+
+      <!-- Project List -->
+      <section class="pm-section-grid">
+    <% projects.forEach(project => { %>
+      <article class="pm-card">
+        <div class="pm-card-header">
+          <div>
+            <div class="pm-card-title"><%= project.title %></div>
+            <div class="pm-card-subtitle"><%= project.domain %></div>
+          </div>
+        </div>
+        <p class="pm-card-subtitle mb-2"><%= project.desc %></p>
+        <p class="pm-card-subtitle">
+          <strong>Skills:</strong>
+          <%= (project.skills_req && typeof project.skills_req.join === 'function')
+              ? project.skills_req.join(', ')
+              : (project.skills_req || 'None specified') %>
+        </p>
+        <div class="d-flex flex-column gap-2 mt-2">
+          <span class="pm-list-meta">Created on <%= new Date(project.createdOn).toLocaleDateString() %></span>
+          <%
+            const hasApplied =
+              project.applicants &&
+              project.applicants.some(applicant => applicant.user && applicant.user._id.toString() === currentUserId);
+          %>
+          <% if (hasApplied) { %>
+            <button class="pm-btn pm-btn-ghost w-100 justify-content-center" disabled>Already applied</button>
+          <% } else { %>
+            <form action="/project/apply/<%= project._id %>" method="POST">
+              <button type="submit" class="pm-btn pm-btn-primary w-100 justify-content-center">
+                Apply
+              </button>
+            </form>
+          <% } %>
+        </div>
+      </article>
+    <% }) %>
+      </section>
+    </main>
+
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+    <script>
+      (function () {
+        const input = document.getElementById('search');
+        if (!input) return;
+
+        function updateMentionState() {
+          const value = input.value.trim();
+          if (value.startsWith('@') && value.length > 1) {
+            input.classList.add('pm-input-mention');
+          } else {
+            input.classList.remove('pm-input-mention');
+          }
+        }
+
+        input.addEventListener('input', updateMentionState);
+        document.addEventListener('DOMContentLoaded', updateMentionState);
+        updateMentionState();
+      })();
+    </script>
+  </body>
+</html>

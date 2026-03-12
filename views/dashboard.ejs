@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>Dashboard · ProjectMate</title>
+  </head>
+  <body class="pm-body">
+    <div class="pm-grid-overlay"></div>
+
+    <%- include('./partials/navbar') %>
+
+    <main class="pm-page">
+      <header class="pm-page-header">
+        <div>
+          <h1 class="pm-page-title">Hi, <%= user.name.split(' ')[0] %></h1>
+          <p class="pm-page-subtitle">
+            Jump back into your projects, track applications, or spin up something new — all from one place.
+          </p>
+        </div>
+      </header>
+
+      <section class="pm-section-grid">
+        <a href="/project/find" class="pm-card text-decoration-none text-reset">
+          <div class="pm-card-header">
+            <div class="pm-card-title">Find projects</div>
+            <span class="pm-tag">Browse live listings</span>
+          </div>
+          <p class="pm-card-subtitle">
+            Discover projects across web, mobile, AI/ML, and more. Filter by domain and apply in a click.
+          </p>
+        </a>
+
+        <a href="/project/create" class="pm-card text-decoration-none text-reset">
+          <div class="pm-card-header">
+            <div class="pm-card-title">Create a project</div>
+            <span class="pm-tag">Lead a new team</span>
+          </div>
+          <p class="pm-card-subtitle">
+            Share a clear brief, required skills, and domain so the right collaborators can find you fast.
+          </p>
+        </a>
+
+        <a href="/project/applications" class="pm-card text-decoration-none text-reset">
+          <div class="pm-card-header">
+            <div class="pm-card-title">My applications</div>
+            <span class="pm-tag">Stay on top of responses</span>
+          </div>
+          <p class="pm-card-subtitle">
+            Review where you’ve applied, see statuses, and follow up on the most promising matches.
+          </p>
+        </a>
+
+        <a href="/project/show" class="pm-card text-decoration-none text-reset">
+          <div class="pm-card-header">
+            <div class="pm-card-title">My projects</div>
+            <span class="pm-tag">Manage incoming interest</span>
+          </div>
+          <p class="pm-card-subtitle">
+            View open projects you own, evaluate applicants, and decide who to bring into your team.
+          </p>
+        </a>
+
+        <a href="/user/profile" class="pm-card text-decoration-none text-reset">
+          <div class="pm-card-header">
+            <div class="pm-card-title">My profile</div>
+            <span class="pm-tag">Keep your signal high</span>
+          </div>
+          <p class="pm-card-subtitle">
+            Make it easy to understand your skills and what you want to work on next.
+          </p>
+        </a>
+
+        <a href="/project/history" class="pm-card text-decoration-none text-reset">
+          <div class="pm-card-header">
+            <div class="pm-card-title">Project history</div>
+            <span class="pm-tag">Look back on wins</span>
+          </div>
+          <p class="pm-card-subtitle">
+            See finished collaborations and refer back to what you’ve shipped with your teams.
+          </p>
+        </a>
+      </section>
+    </main>
+
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+  </body>
+</html>

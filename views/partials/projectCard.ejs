@@ -1,0 +1,20 @@
+<div class="card h-100 shadow-sm border-0">
+  <div class="card-body">
+    <h5 class="card-title"><%= project.title %></h5>
+    <h6 class="card-subtitle mb-2 text-muted"><%= project.domain %></h6>
+    <p class="card-text"><%= project.desc %></p>
+
+    <p><strong>Skills Required:</strong> <%= project.skills_req %></p>
+    <p class="text-muted small">Created On: <%= new Date(project.createdOn).toLocaleDateString() %></p>
+
+    <% if (project.createdBy.toString() !== currentUserId.toString()) { %>
+      <form action="/project/apply/<%= project._id %>" method="POST">
+        <button type="submit" class="btn btn-success w-100 mt-2">Apply</button>
+      </form>
+    <% } else { %>
+      <div class="alert alert-info mt-2 text-center p-2">
+        <small>You created this project</small>
+      </div>
+    <% } %>
+  </div>
+</div>
