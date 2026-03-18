@@ -21,6 +21,9 @@
 
       <section class="pm-card">
         <form action="/project/create" method="POST" class="d-flex flex-column gap-3">
+          <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <% } %>
           <div>
             <label for="title" class="pm-form-label">Project title</label>
             <input type="text" id="title" name="title" class="pm-input" placeholder="Eg. AI-powered study partner" required />
@@ -49,6 +52,22 @@
               <option value="Game Development">Game Development</option>
               <option value="Other">Other</option>
             </select>
+          </div>
+
+          <div>
+            <label for="maxApplicants" class="pm-form-label">Number of collaborators needed</label>
+            <input
+              id="maxApplicants"
+              name="maxApplicants"
+              type="number"
+              min="1"
+              max="4"
+              value="1"
+              class="pm-input"
+              placeholder="1"
+              required
+            />
+            <p class="pm-field-help">Choose how many collaborators you want (max 4). The project stays open until all seats are approved.</p>
           </div>
 
           <button type="submit" class="pm-btn pm-btn-primary mt-2 justify-content-center">

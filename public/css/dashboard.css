@@ -1,0 +1,500 @@
+/* Dashboard specific styles inspired by GitHub */
+
+/* ============================================
+   HERO SECTION LAYOUT & SPACING
+   ============================================ */
+
+.pm-hero-shell {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  padding: var(--spacing-hero-top) 2rem 3rem;
+  margin-bottom: 5rem;
+  position: relative;
+  align-items: center;
+}
+
+.pm-hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.pm-hero-shell::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
+  z-index: -1;
+  border-radius: 24px;
+}
+
+.pm-hero-kicker {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  mix-blend-mode: normal;
+  position: relative;
+  z-index: 10;
+}
+
+.pm-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 7vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+  color: var(--pm-text);
+  letter-spacing: -0.02em;
+}
+
+.pm-hero-title span {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 30%, #ec4899 60%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  color: transparent;
+  background-clip: text;
+  filter: brightness(1.1);
+}
+
+.pm-hero-subtitle {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.65;
+  margin-bottom: 2rem;
+  max-width: 520px;
+  mix-blend-mode: normal;
+  position: relative;
+  z-index: 10;
+}
+
+/* ============================================
+   HERO CTA BUTTONS (3-TIER SYSTEM)
+   ============================================ */
+
+.pm-hero-actions {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+/* Tier 1: Primary Button */
+.pm-btn-hero-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.01em;
+}
+
+.pm-btn-hero-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.pm-btn-hero-primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  filter: brightness(1.1);
+}
+
+.pm-btn-hero-primary:hover::before {
+  left: 100%;
+}
+
+.pm-btn-hero-primary:active {
+  transform: scale(0.98);
+}
+
+/* Tier 2: Secondary Button */
+.pm-btn-hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0 32px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1.5px solid rgba(139, 92, 246, 0.6);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  letter-spacing: 0.01em;
+}
+
+.pm-btn-hero-secondary:hover {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.8);
+  transform: scale(1.02);
+}
+
+.pm-btn-hero-secondary:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   HERO STATS PANEL & ACTIVITY CARD
+   ============================================ */
+
+.pm-hero-panel {
+  display: flex;
+  align-items: flex-start;
+}
+
+.pm-hero-panel-card {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(15, 15, 15, 0.92) 100%);
+  box-shadow: var(--pm-shadow-xl), 0 0 60px rgba(139, 92, 246, 0.12);
+  padding: 28px;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.pm-hero-panel-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--pm-accent), var(--pm-accent-strong), var(--pm-accent));
+}
+
+/* Activity Card Header */
+.pm-hero-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pm-hero-panel-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--pm-text);
+  letter-spacing: -0.01em;
+}
+
+.pm-hero-panel-badge {
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+/* Stats Grid */
+.pm-hero-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+/* Individual Stat Card */
+.pm-hero-stat-card {
+  background: transparent;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 12px;
+  padding: 18px 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pm-hero-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+}
+
+.pm-hero-stat-card:hover {
+  background: rgba(139, 92, 246, 0.08);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
+}
+
+.pm-hero-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 10px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.pm-hero-stat-value {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--pm-text);
+  line-height: 1;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.pm-hero-stat-delta {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Activity Card Footer */
+.pm-hero-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pm-hero-footer-text {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+}
+
+.pm-hero-footer-link {
+  font-size: 13px;
+  color: rgba(139, 92, 246, 0.85);
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  letter-spacing: -0.01em;
+}
+
+.pm-hero-footer-link:hover {
+  color: var(--pm-accent-strong);
+  text-decoration: underline;
+}
+
+/* ============================================
+   PROJECTS SECTION STYLING
+   ============================================ */
+
+.pm-projects-section {
+  margin-top: var(--spacing-section-margin);
+  padding: 0 1.5rem;
+}
+
+.pm-section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--pm-text);
+}
+
+.pm-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-card-gap);
+}
+
+.pm-projects-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.pm-projects-view-all {
+  color: var(--pm-accent-strong);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.pm-projects-view-all:hover {
+  color: #f59e0b;
+  text-decoration: underline;
+}
+
+/* Card hover effects */
+.pm-card-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.pm-card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--pm-shadow-xl), 0 0 40px rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+/* Card icons */
+.pm-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+  transition: all 0.3s ease;
+}
+
+.pm-card-hover:hover .pm-card-icon {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.25);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(139, 92, 246, 0.15));
+}
+
+/* Button enhancements */
+.pm-btn {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+.pm-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.pm-btn:hover::before {
+  transform: translateX(100%);
+}
+
+.pm-btn span {
+  font-size: 1.1rem;
+  line-height: 1;
+  z-index: 1;
+  position: relative;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .pm-hero-shell {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: var(--spacing-hero-top) 2rem 3rem;
+  }
+
+  .pm-hero-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .pm-hero-shell {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    text-align: center;
+    padding: var(--spacing-hero-top) 1.5rem 2.5rem;
+    align-items: auto;
+  }
+
+  .pm-hero-kicker {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+
+  .pm-hero-title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 1.2rem;
+  }
+
+  .pm-hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .pm-hero-actions {
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pm-btn-hero-primary,
+  .pm-btn-hero-secondary {
+    width: 100%;
+    height: 48px;
+    font-size: 0.95rem;
+  }
+
+  .pm-hero-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .pm-hero-stat-card {
+    padding: 16px;
+  }
+
+  .pm-hero-stat-value {
+    font-size: 32px;
+    margin-bottom: 4px;
+  }
+
+  .pm-projects-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .pm-card {
+    min-height: 180px;
+    padding: 1.5rem;
+  }
+}

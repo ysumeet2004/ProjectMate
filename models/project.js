@@ -23,36 +23,57 @@ const projectSchema = new mongoose.Schema({
     },
     expires_in:{
         type:Number,
-        default:3,
-        min:1,
-        max:7,
+        default:30,
+        min:7,
+        max:90,
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
-        required: true,},
+        required: true,
+    },
 
     applicants: [{
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    required: true
-  },
-  appliedAt: {
-    type: Date,
-    default: Date.now
-  }
-}]
-,
-approved_user: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'user',
-  default: null
-},status: {
-    type: String,
-    enum: ['OPEN', 'FINISHED'],
-    default: 'OPEN',
-  },
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        required: true
+      },
+      appliedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+
+    // Maximum number of seats (applicants that can be approved)
+    maxApplicants: {
+      type: Number,
+      default: 1,
+      min: 1,
+      max: 4
+    },
+
+    // Users approved as collaborators for this project
+    approved_users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user'
+      }
+    ],
+
+    // Users rejected for this project
+    rejected_users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user'
+      }
+    ],
+
+    status: {
+      type: String,
+      enum: ['OPEN', 'IN_PROGRESS', 'FINISHED'],
+      default: 'OPEN',
+    },
 });
 
 //creating user model

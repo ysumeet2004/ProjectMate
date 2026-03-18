@@ -2,48 +2,623 @@
 <html lang="en">
   <head>
     <%- include('./partials/head') %>
-    <title>My profile · ProjectMate</title>
+    <title><%= isOwnProfile ? 'My profile' : `Profile of ${user.name}` %> · ProjectMate</title>
   </head>
   <body class="pm-body">
     <div class="pm-grid-overlay"></div>
 
     <%- include('partials/navbar') %>
 
-    <main class="pm-page">
+    <main class="pm-page" id="main-content" tabindex="-1">
       <header class="pm-page-header">
         <div>
-          <h1 class="pm-page-title">My profile</h1>
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+            <h1 class="pm-page-title" style="margin-bottom: 0;"><%= isOwnProfile ? 'My Profile' : `Profile of ${user.name}` %></h1>
+            <span style="display: inline-block; background: var(--pm-accent-soft); color: var(--pm-accent-strong); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">PUBLIC</span>
+          </div>
           <p class="pm-page-subtitle">
-            A simple summary of who you are across ProjectMate. Keep this up to date for better matches.
+            <%= isOwnProfile ? 'A complete overview of your ProjectMate presence. Keep this up to date for better matches.' : `View ${user.name}'s profile and collaboration history.` %>
           </p>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem;">
+            <button id="copyProfileLink" type="button" class="pm-btn pm-btn-ghost">Copy profile link</button>
+            <button id="shareProfileLink" type="button" class="pm-btn pm-btn-ghost">Share</button>
+            <% if (!isOwnProfile) { %>
+              <button id="contactUser" type="button" class="pm-btn pm-btn-primary">Send Message</button>
+            <% } %>
+          </div>
         </div>
       </header>
 
-      <section class="pm-card" style="max-width: 520px;">
-        <div class="pm-list">
-          <div class="pm-list-row">
-            <div class="pm-list-main">Name</div>
-            <div class="pm-list-meta"><%= user.name %></div>
+      <div style="display: grid; grid-template-columns: 1fr 380px; gap: 3rem; max-width: 1200px;">
+        <!-- Left Column: Profile Info -->
+        <div>
+          <!-- Profile Header Card -->
+          <div class="pm-card" style="margin-bottom: 2rem; border: 1px solid var(--pm-border-subtle); overflow: hidden;">
+            <div style="display: flex; align-items: flex-start; gap: 2rem;">
+              <!-- Avatar -->
+              <div class="pm-avatar-large">
+                <% if (user.avatar) { %>
+                  <img src="<%= user.avatar %>" alt="<%= user.name %>'s avatar" class="pm-avatar-img">
+                <% } else { %>
+                  <div class="pm-avatar-placeholder">
+                    <%= user.name.split(' ').map(n => n[0]).join('').toUpperCase() %>
+                  </div>
+                <% } %>
+              </div>
+
+              <!-- Profile Info -->
+              <div style="flex: 1;">
+                <h2 class="pm-card-title" style="margin-bottom: 0.5rem;"><%= user.name %></h2>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                  <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--pm-success);"></span>
+                  <p class="pm-card-subtitle" style="margin: 0;">Member since <%= new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) %></p>
+                </div>
+
+                <!-- Stats in Profile Card -->
+                <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;">
+                  <div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--pm-text);"><%= stats?.projectsCreated || 0 %></div>
+                    <div style="font-size: 0.8rem; color: var(--pm-subtext); font-weight: 500;">projects created</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--pm-text);"><%= stats?.projectsJoined || 0 %></div>
+                    <div style="font-size: 0.8rem; color: var(--pm-subtext); font-weight: 500;">project joined</div>
+                  </div>
+                </div>
+
+                <% if (user.bio) { %>
+                  <p class="pm-card-subtitle" style="margin-bottom: 1.5rem;"><%= user.bio %></p>
+                <% } %>
+
+                <!-- Location & Timezone -->
+                <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
+                  <% if (user.location) { %>
+                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                      <span style="font-size: 0.75rem; color: var(--pm-subtext); text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">location</span>
+                      <span class="pm-list-meta"><%= user.location %></span>
+                    </div>
+                  <% } %>
+                  <% if (user.timezone) { %>
+                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                      <span style="font-size: 0.75rem; color: var(--pm-subtext); text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">timezone</span>
+                      <span class="pm-list-meta"><%= user.timezone %></span>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="pm-list-row">
-            <div class="pm-list-main">Email</div>
-            <div class="pm-list-meta"><%= user.email %></div>
+
+          <!-- Stats Cards Grid -->
+          <% if (typeof stats !== 'undefined' && stats) { %>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+            <div>
+              <div class="pm-stat-card">
+                <div class="pm-stat-value"><%= stats.projectsCreated || 0 %></div>
+                <div class="pm-stat-label">Projects Created</div>
+              </div>
+            </div>
+            <div>
+              <div class="pm-stat-card">
+                <div class="pm-stat-value"><%= stats.projectsJoined || 0 %></div>
+                <div class="pm-stat-label">Projects Joined</div>
+              </div>
+            </div>
+            <div>
+              <div class="pm-stat-card">
+                <div class="pm-stat-value"><%= stats.completedProjects || 0 %></div>
+                <div class="pm-stat-label">Completed</div>
+              </div>
+            </div>
+            <div>
+              <div class="pm-stat-card">
+                <div class="pm-stat-value"><%= Math.round(stats.successRate || 0) %>%</div>
+                <div class="pm-stat-label">Success Rate</div>
+              </div>
+            </div>
           </div>
-          <div class="pm-list-row">
-            <div class="pm-list-main">User ID</div>
-            <div class="pm-list-meta"><%= user._id %></div>
+          <% } %>
+
+          <!-- Contact & Links Card -->
+          <div class="pm-card">
+            <div class="pm-form-header mb-4">
+              <h3 class="pm-card-title mb-1">Contact & Links</h3>
+              <p class="pm-form-description">Keep your profile information up to date for better collaboration matches</p>
+            </div>
+            <% if (isOwnProfile) { %>
+            <form action="/user/profile" method="POST" class="pm-form">
+              <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <% } %>
+
+              <!-- Bio Section -->
+              <div class="pm-form-group">
+                <label for="bio" class="pm-form-label">Bio</label>
+                <p class="pm-form-sublabel">Tell others about yourself and what you're looking for</p>
+                <textarea
+                  id="bio"
+                  name="bio"
+                  class="pm-textarea"
+                  placeholder="Share your interests, expertise, and collaboration goals..."
+                  maxlength="500"
+                  rows="3"
+                ><%= user.bio || '' %></textarea>
+                <p class="pm-form-helper"><span id="bioCount"><%= (user.bio || '').length %></span>/500 characters</p>
+              </div>
+
+              <!-- Skills Section -->
+              <div class="pm-form-group">
+                <label for="skills" class="pm-form-label">Skills</label>
+                <p class="pm-form-sublabel">List your core competencies and areas of expertise</p>
+                <input
+                  id="skills"
+                  type="text"
+                  name="skills"
+                  class="pm-input"
+                  placeholder="React, Node.js, Product Design, etc."
+                  value="<%= (user.skills || []).join(', ') %>"
+                />
+                <p class="pm-form-helper">Separate skills with commas for better search visibility</p>
+              </div>
+
+              <!-- Location & Timezone Section -->
+              <div class="pm-form-row">
+                <div class="pm-form-group">
+                  <label for="location" class="pm-form-label">Location</label>
+                  <p class="pm-form-sublabel">Where you're based</p>
+                  <input
+                    id="location"
+                    type="text"
+                    name="location"
+                    class="pm-input"
+                    placeholder="San Francisco, USA"
+                    value="<%= user.location || '' %>"
+                  />
+                </div>
+
+                <div class="pm-form-group">
+                  <label for="timezone" class="pm-form-label">Timezone</label>
+                  <p class="pm-form-sublabel">Your current timezone</p>
+                  <input
+                    id="timezone"
+                    type="text"
+                    name="timezone"
+                    class="pm-input"
+                    placeholder="PST, EST, UTC+5:30"
+                    value="<%= user.timezone || '' %>"
+                  />
+                </div>
+              </div>
+
+              <!-- Phone Section -->
+              <div class="pm-form-group">
+                <div class="pm-form-label-with-checkbox">
+                  <div>
+                    <label for="phone" class="pm-form-label">Phone</label>
+                    <p class="pm-form-sublabel">Your contact number</p>
+                  </div>
+                  <label class="pm-checkbox-label">
+                    <input type="checkbox" name="showPhone" class="pm-checkbox-input" <%= user.showPhone ? 'checked' : '' %> />
+                    <span class="pm-checkbox-text">Make public</span>
+                  </label>
+                </div>
+                <input
+                  id="phone"
+                  type="text"
+                  name="phone"
+                  class="pm-input"
+                  placeholder="+1 (555) 123-4567"
+                  value="<%= user.phone || '' %>"
+                />
+                <p class="pm-form-helper">Your phone number is private by default</p>
+              </div>
+
+              <!-- Links Section Header -->
+              <div class="pm-form-divider">
+                <h4 class="pm-form-sectiontitle">Public Links</h4>
+                <p class="pm-form-sublabel">Add up to 3 links to your portfolio, GitHub, LinkedIn, or other profiles</p>
+              </div>
+
+              <% for (let i = 0; i < 3; i++) { %>
+                <% const link = (user.links || [])[i] || {}; %>
+                <div class="pm-form-group pm-form-link-group">
+                  <div class="pm-form-row">
+                    <div class="pm-form-group">
+                      <label for="linkName<%= i + 1 %>" class="pm-form-label">Link <%= i + 1 %> — Name</label>
+                      <input
+                        id="linkName<%= i + 1 %>"
+                        type="text"
+                        name="linkName<%= i + 1 %>"
+                        class="pm-input"
+                        placeholder="e.g., Portfolio"
+                        value="<%= link.name || '' %>"
+                      />
+                    </div>
+                    <div class="pm-form-group">
+                      <label for="linkUrl<%= i + 1 %>" class="pm-form-label">URL</label>
+                      <input
+                        id="linkUrl<%= i + 1 %>"
+                        type="url"
+                        name="linkUrl<%= i + 1 %>"
+                        class="pm-input"
+                        placeholder="https://example.com"
+                        value="<%= link.url || '' %>"
+                      />
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+
+              <!-- Form Actions -->
+              <div class="pm-form-actions mt-6">
+                <button type="submit" class="pm-btn pm-btn-primary">
+                  <span>Save Changes</span>
+                </button>
+                <a href="/user/logout" class="pm-btn pm-btn-outline-danger">
+                  <span>Log Out</span>
+                </a>
+              </div>
+            </form>
+            <% } else { %>
+            <div class="pm-list">
+              <div class="pm-list-row">
+                <div class="pm-list-main">Email</div>
+                <div class="pm-list-meta"><%= user.email %></div>
+              </div>
+
+              <div class="pm-list-row">
+                <div class="pm-list-main">Phone</div>
+                <div class="pm-list-meta">
+                  <% if (canViewPhone && user.phone) { %>
+                    <%= user.phone %>
+                  <% } else { %>
+                    Hidden
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="pm-list-row">
+                <div class="pm-list-main">Public links</div>
+                <div class="pm-list-meta">
+                  <% if (user.links && user.links.length > 0) { %>
+                    <ul style="padding-left: 1.2rem; margin: 0;">
+                      <% user.links.forEach(link => { %>
+                        <% if (link.url) { %>
+                          <li style="margin-bottom: 0.25rem;">
+                            <a href="<%= link.url %>" target="_blank" rel="noopener noreferrer" class="pm-nav-link">
+                              <%= link.name || link.url %>
+                            </a>
+                          </li>
+                        <% } %>
+                      <% }) %>
+                    </ul>
+                  <% } else { %>
+                    <span class="pm-list-meta">No links shared</span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            <% } %>
           </div>
         </div>
 
-        <div class="mt-3">
-          <a href="/user/logout" class="pm-btn pm-btn-ghost w-100 justify-content-center" style="border-color: var(--pm-danger); color: var(--pm-danger);">
-            Log out
-          </a>
+        <!-- Right Column: Activity & Quick Stats -->
+        <div>
+          <!-- Quick Stats Card -->
+          <div class="pm-card mb-4">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+              <h3 class="pm-card-title mb-0">Quick Stats</h3>
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, #a78bfa, #c4b5fd);"></div>
+            </div>
+            <% if (stats) { %>
+            <div class="pm-list">
+              <div class="pm-list-row">
+                <div class="pm-list-main">Total Projects</div>
+                <div class="pm-list-meta"><%= stats.totalProjects %></div>
+              </div>
+              <div class="pm-list-row">
+                <div class="pm-list-main">Active Projects</div>
+                <div class="pm-list-meta"><%= stats.totalProjects - stats.completedProjects %></div>
+              </div>
+              <div class="pm-list-row">
+                <div class="pm-list-main">Completion Rate</div>
+                <div class="pm-list-meta"><%= Math.round(stats.successRate || 0) %>%</div>
+              </div>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Overall Progress Card -->
+          <div class="pm-card mb-4">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+              <h3 class="pm-card-title mb-0">Overall Progress</h3>
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, #a78bfa, #c4b5fd);"></div>
+            </div>
+            <% if (stats) { %>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 2rem;">
+              <!-- Circular Progress -->
+              <div style="position: relative; width: 140px; height: 140px; flex-shrink: 0;">
+                <svg viewBox="0 0 140 140" style="transform: rotate(-90deg); width: 100%; height: 100%;">
+                  <!-- Background circle -->
+                  <circle cx="70" cy="70" r="60" fill="none" stroke="var(--pm-border-subtle)" stroke-width="8"/>
+                  <!-- Progress circle -->
+                  <circle cx="70" cy="70" r="60" fill="none" stroke="url(#progressGradient)" stroke-width="8" 
+                    stroke-dasharray="<%= (Math.round((stats.completedProjects / stats.totalProjects) * 100) / 100) * 376.99 %> 376.99"
+                    stroke-linecap="round"/>
+                  <defs>
+                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#51cf66;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#34c168;stop-opacity:1" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                  <div style="font-size: 1.75rem; font-weight: 800; color: var(--pm-accent-strong);"><%= Math.round((stats.completedProjects / stats.totalProjects) * 100) %>%</div>
+                </div>
+              </div>
+              
+              <!-- Progress Details -->
+              <div>
+                <div style="margin-bottom: 1rem;">
+                  <div style="font-size: 1.5rem; font-weight: 800; color: var(--pm-text);"><%= stats.completedProjects %> / <%= stats.totalProjects %></div>
+                  <div style="font-size: 0.85rem; color: var(--pm-subtext);">Projects done</div>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--pm-subtext); line-height: 1.5;">
+                  <div><%= stats.totalProjects - stats.completedProjects %> active · <%= stats.completedProjects %> joined</div>
+                </div>
+              </div>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Activity Calendar Card -->
+          <div class="pm-card">
+            <div class="pm-calendar-header">
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 1rem;">
+                <div>
+                  <h3 class="pm-calendar-title">Activity Calendar</h3>
+                  <p class="pm-calendar-subtitle">Your collaboration activity over the past month</p>
+                </div>
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, #a78bfa, #c4b5fd); flex-shrink: 0;"></div>
+              </div>
+              <div class="pm-calendar-legend">
+                <span>Less</span>
+                <div class="pm-calendar-day"></div>
+                <div class="pm-calendar-day active-1"></div>
+                <div class="pm-calendar-day active-2"></div>
+                <div class="pm-calendar-day active-3"></div>
+                <div class="pm-calendar-day active-4"></div>
+                <span>More</span>
+              </div>
+            </div>
+
+            <div class="pm-calendar-months">
+              <span id="calendarMonthName" class="pm-calendar-month"></span>
+            </div>
+
+            <div class="pm-calendar-grid" id="activityCalendar">
+              <!-- Calendar will be generated by JavaScript -->
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
     </main>
 
     <%- include('./partials/footer') %>
     <%- include('./partials/scripts') %>
+
+    <script>
+      (function () {
+        const copyBtn = document.getElementById('copyProfileLink');
+        const shareBtn = document.getElementById('shareProfileLink');
+        const contactBtn = document.getElementById('contactUser');
+
+        if (copyBtn) {
+          copyBtn.addEventListener('click', async () => {
+            const url = window.location.href;
+            try {
+              await navigator.clipboard.writeText(url);
+              const original = copyBtn.textContent;
+              copyBtn.textContent = 'Copied!';
+              setTimeout(() => (copyBtn.textContent = original), 1400);
+            } catch (err) {
+              alert('Unable to copy link. Please copy it manually.');
+            }
+          });
+        }
+
+        if (shareBtn) {
+          shareBtn.addEventListener('click', () => {
+            const url = window.location.href;
+            const subject = encodeURIComponent('Check out this ProjectMate profile');
+            const body = encodeURIComponent(`Here is the profile link:\n\n${url}`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+          });
+        }
+
+        if (contactBtn) {
+          contactBtn.addEventListener('click', () => {
+            const url = window.location.href;
+            const subject = encodeURIComponent(`Message from ProjectMate`);
+            const body = encodeURIComponent(`Hi ${user.name},\n\nI found your profile on ProjectMate and I'm interested in collaborating...\n\nProfile: ${url}`);
+            window.location.href = `mailto:${user.email}?subject=${subject}&body=${body}`;
+          });
+        }
+
+        // Number counting animation for stat cards
+        function animateNumber(element, targetValue, duration = 2000) {
+          const startValue = 0;
+          const startTime = performance.now();
+
+          function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Easing function for smooth animation
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
+
+            element.textContent = currentValue;
+
+            if (progress < 1) {
+              requestAnimationFrame(update);
+            } else {
+              element.textContent = targetValue;
+            }
+          }
+
+          requestAnimationFrame(update);
+        }
+
+        // Animate stat values on page load
+        document.addEventListener('DOMContentLoaded', () => {
+          const statValues = document.querySelectorAll('.pm-stat-value');
+
+          statValues.forEach((element) => {
+            const text = element.textContent.trim();
+            const isPercentage = text.includes('%');
+            const numericValue = parseInt(text.replace('%', ''));
+
+            if (!isNaN(numericValue)) {
+              element.textContent = '0' + (isPercentage ? '%' : '');
+              animateNumber(element, numericValue, 2000);
+            }
+          });
+
+          // Generate activity calendar (monthly)
+          generateActivityCalendar();
+        });
+
+        // Generate GitHub-style activity calendar
+        function generateActivityCalendar() {
+          const calendarGrid = document.getElementById('activityCalendar');
+          if (!calendarGrid) return;
+
+          const today = new Date();
+          // Start from one month ago
+          const oneMonthAgo = new Date(today);
+          oneMonthAgo.setMonth(today.getMonth() - 1);
+
+          // Create activity map from server data
+          const activityMap = {};
+          <% if (typeof activities !== 'undefined' && activities) { %>
+            <% activities.forEach(activity => { %>
+              const dateKey = new Date('<%= activity.date %>').toDateString();
+              activityMap[dateKey] = (activityMap[dateKey] || 0) + 1;
+            <% }); %>
+          <% } %>
+
+          // Generate calendar weeks covering the past month (up to 6 weeks)
+          const weeks = [];
+          let currentDate = new Date(oneMonthAgo);
+
+          // Move back to the previous Sunday so the calendar rows start on Sunday
+          while (currentDate.getDay() !== 0) {
+            currentDate.setDate(currentDate.getDate() - 1);
+          }
+
+          const maxWeeks = 6; // show at most 6 weeks (covers ~42 days)
+          while (currentDate <= today && weeks.length < maxWeeks) {
+            const weekDays = [];
+
+            for (let day = 0; day < 7; day++) {
+              const dateKey = currentDate.toDateString();
+              const activityCount = activityMap[dateKey] || 0;
+              const isFuture = currentDate > today;
+
+              let intensityClass = '';
+              if (!isFuture && activityCount > 0) {
+                if (activityCount === 1) intensityClass = 'active-1';
+                else if (activityCount === 2) intensityClass = 'active-2';
+                else if (activityCount <= 4) intensityClass = 'active-3';
+                else intensityClass = 'active-4';
+              }
+
+              weekDays.push({
+                date: new Date(currentDate),
+                activityCount,
+                intensityClass,
+                isFuture
+              });
+
+              currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            weeks.push(weekDays);
+          }
+
+          // Clear and render the calendar
+          calendarGrid.innerHTML = '';
+
+          // Set header month name
+          const monthNameEl = document.getElementById('calendarMonthName');
+          if (monthNameEl) {
+            const options = { month: 'long', year: 'numeric' };
+            monthNameEl.textContent = new Date().toLocaleDateString('en-US', options);
+          }
+
+          // Render the calendar
+          weeks.forEach(week => {
+            const weekDiv = document.createElement('div');
+            weekDiv.className = 'pm-calendar-week';
+
+            week.forEach(day => {
+              const dayDiv = document.createElement('div');
+              dayDiv.className = `pm-calendar-day ${day.intensityClass}`;
+              dayDiv.title = `${day.date.toDateString()}: ${day.activityCount} activities`;
+
+              // Add click handler for future enhancement
+              dayDiv.addEventListener('click', () => {
+                if (day.activityCount > 0) {
+                  // Could show tooltip with activity details
+                  console.log(`${day.date.toDateString()}: ${day.activityCount} activities`);
+                }
+              });
+
+              weekDiv.appendChild(dayDiv);
+            });
+
+            calendarGrid.appendChild(weekDiv);
+          });
+        }
+      })();
+
+      // Professional Form Interactions
+      (function() {
+        // Bio character counter
+        const bioTextarea = document.getElementById('bio');
+        const bioCount = document.getElementById('bioCount');
+        
+        if (bioTextarea && bioCount) {
+          bioTextarea.addEventListener('input', function() {
+            bioCount.textContent = this.value.length;
+          });
+        }
+
+        // Add smooth transitions on input focus
+        const inputs = document.querySelectorAll('.pm-input, .pm-textarea');
+        inputs.forEach(input => {
+          input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+          });
+          input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+          });
+        });
+
+        // Form submission feedback
+        const form = document.querySelector('.pm-form');
+        if (form) {
+          form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('.pm-btn-primary');
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.style.opacity = '0.6';
+            }
+          });
+        }
+      })();
   </body>
 </html>
+

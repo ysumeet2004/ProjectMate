@@ -1,0 +1,124 @@
+<!-- Trust Badge Component
+Shows verification badges and trust indicators for users
+
+Usage:
+<%- include('./trust-badges', {
+  isVerified: true,
+  acceptedProjects: 5,
+  averageRating: 4.8,
+  completedProjects: 3,
+  tags: ['Reliable', 'Great communicator']
+}) %>
+-->
+
+<div class="pm-trust-badges">
+  <!-- Verified Badge -->
+  <% if (isVerified) { %>
+    <div class="pm-badge pm-badge-verified" title="Email verified">
+      <span>✓</span> Verified
+    </div>
+  <% } %>
+
+  <!-- Average Rating -->
+  <% if (averageRating !== undefined && averageRating > 0) { %>
+    <div class="pm-badge pm-badge-rating">
+      <span class="pm-rating-stars">
+        <% for (let i = 0; i < 5; i++) { %>
+          <%= i < Math.round(averageRating) ? '★' : '☆' %>
+        <% } %>
+      </span>
+      <%= averageRating.toFixed(1) %>
+    </div>
+  <% } %>
+
+  <!-- Completed Projects Badge -->
+  <% if (completedProjects !== undefined && completedProjects > 0) { %>
+    <div class="pm-badge pm-badge-completed">
+      <span>🏆</span> <%= completedProjects %> completed
+    </div>
+  <% } %>
+
+  <!-- Skill Tags -->
+  <% if (tags && tags.length > 0) { %>
+    <div class="pm-badge-group">
+      <% tags.slice(0, 3).forEach(tag => { %>
+        <span class="pm-badge pm-badge-tag"><%= tag %></span>
+      <% }) %>
+      <% if (tags.length > 3) { %>
+        <span class="pm-badge pm-badge-more">+<%= tags.length - 3 %></span>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<style>
+.pm-trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0.75rem 0;
+}
+
+.pm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.pm-badge-verified {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--pm-success);
+  color: var(--pm-success);
+}
+
+.pm-badge-rating {
+  background: rgba(251, 146, 60, 0.1);
+  border-color: #fb923c;
+  color: #fb923c;
+}
+
+.pm-rating-stars {
+  font-size: 0.75rem;
+  letter-spacing: -0.1em;
+}
+
+.pm-badge-completed {
+  background: rgba(167, 139, 250, 0.1);
+  border-color: var(--pm-accent);
+  color: var(--pm-accent);
+}
+
+.pm-badge-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pm-badge-tag {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--pm-border-strong);
+  color: var(--pm-accent);
+}
+
+.pm-badge-more {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--pm-border-subtle);
+}
+
+@media (max-width: 768px) {
+  .pm-trust-badges {
+    gap: 0.5rem;
+  }
+
+  .pm-badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+</style>

@@ -1,0 +1,30 @@
+<!-- Empty State Component
+Usage:
+<%- include('./empty-state', {
+  icon: '🔍',
+  title: 'No projects found',
+  subtitle: 'Try adjusting your filters or create a new project',
+  action: { text: 'Create Project', url: '/project/create' },
+  secondaryAction: { text: 'Browse More', url: '/project/find' }
+}) %>
+-->
+
+<div class="pm-empty-state">
+  <div class="pm-empty-state-icon"><%= icon %></div>
+  <h3 class="pm-empty-state-title"><%= title %></h3>
+  <p class="pm-empty-state-subtitle"><%= subtitle %></p>
+  <% if (action || secondaryAction) { %>
+    <div class="pm-empty-state-actions">
+      <% if (action) { %>
+        <a href="<%= action.url %>" class="pm-btn pm-btn-primary">
+          <%= action.text %>
+        </a>
+      <% } %>
+      <% if (secondaryAction) { %>
+        <a href="<%= secondaryAction.url %>" class="pm-btn pm-btn-ghost">
+          <%= secondaryAction.text %>
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+</div>

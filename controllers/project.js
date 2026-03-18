@@ -2,19 +2,135 @@ const project = require('../models/project');
 const user = require('../models/user');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const logger = require('../utils/logger');
+
+// --- NEW FUNCTION: Get Profile Statistics ---
+async function getProfileStats(userId) {
+    try {
+        const [projectsCreated, projectsJoined, totalProjects] = await Promise.all([
+            project.countDocuments({ createdBy: userId }),
+            project.countDocuments({ approved_users: userId }),
+            project.countDocuments({
+                $or: [
+                    { createdBy: userId },
+                    { approved_users: userId }
+                ]
+            })
+        ]);
+
+        const completedProjects = await project.countDocuments({
+            $or: [
+                { createdBy: userId, status: 'FINISHED' },
+                { approved_users: userId, status: 'FINISHED' }
+            ]
+        });
+
+        const successRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
+
+        return {
+            projectsCreated,
+            projectsJoined,
+            totalProjects,
+            completedProjects,
+            successRate
+        };
+    } catch (err) {
+        logger.error('Error getting profile stats: %o', err);
+        return {
+            projectsCreated: 0,
+            projectsJoined: 0,
+            totalProjects: 0,
+            completedProjects: 0,
+            successRate: 0
+        };
+    }
+}
+
+async function getUserActivities(userId) {
+    try {
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+        // Get all projects created by user in the last year
+        const createdProjects = await project.find({
+          createdBy: userId,
+          createdOn: { $gte: oneMonthAgo }
+        }).select('createdOn title');
+
+        // Get all applications by user in the last year
+        const userApplications = await project.find({
+          'applicants.user': userId,
+          'applicants.appliedAt': { $gte: oneMonthAgo }
+        }).select('applicants.$ title');
+
+        // Get all approved projects for user in the last year
+        const approvedProjects = await project.find({
+          approved_users: userId,
+          createdOn: { $gte: oneMonthAgo }
+        }).select('createdOn title');
+
+        // Combine all activities
+        const activities = [];
+
+        // Add project creations
+        createdProjects.forEach(project => {
+            activities.push({
+                date: project.createdOn,
+                type: 'created',
+                title: project.title,
+                description: 'Created project'
+            });
+        });
+
+        // Add applications
+        userApplications.forEach(project => {
+            const application = project.applicants.find(app => app.user.toString() === userId.toString());
+            if (application) {
+                activities.push({
+                    date: application.appliedAt,
+                    type: 'applied',
+                    title: project.title,
+                    description: 'Applied to project'
+                });
+            }
+        });
+
+        // Add approvals (when user was approved for projects)
+        approvedProjects.forEach(project => {
+            activities.push({
+                date: project.createdOn, // Using project creation date as approximation
+                type: 'approved',
+                title: project.title,
+                description: 'Joined project'
+            });
+        });
+
+        // Sort by date (most recent first)
+        activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        return activities.slice(0, 50); // Limit to 50 most recent activities
+    } catch (err) {
+        logger.error('Error getting user activities: %o', err);
+        return [];
+    }
+}
 
 async function projectMaker(req, res) {
-  const { title, desc, skills, domain } = req.body;
+  const { title, desc, skills, domain, maxApplicants } = req.body;
 
-  console.log('Incoming project data:', { title, desc, skills, domain, user: req.user });
-  console.log(JSON.stringify(req.user, null, 2));
+  logger.info('Incoming project data: %o', { title, desc, skills, domain, maxApplicants, user: req.user });
+
+  const seats = Math.min(Math.max(parseInt(maxApplicants, 10) || 1, 1), 4);
 
   const newProject = new project({
     title,
     desc,
     skills_req: skills,
     domain,
-    createdBy: req.user.id // Must come from verifyToken
+    createdBy: req.user.id, // Must come from verifyToken
+    maxApplicants: seats,
+    approved_users: [],
+    status: 'OPEN',
   });
 
   await newProject.save();
@@ -39,15 +155,30 @@ async function showAll(req, res) {
       };
     });
 
-    res.render('my-projects', { projects: filteredProjects });
+    res.render('my-projects', { projects: filteredProjects, currentPath: req.path });
   } catch (err) {
-    console.error("Error fetching projects:", err);
+    logger.error('Error fetching projects: %o', err);
     res.status(500).send("Server Error");
   }
 }
 
+// Helper: determines if two users are connected via an approved project
+async function canViewPhone(viewerId, profileId) {
+  // viewer sees profile owner's phone if either:
+  // - profile owner approved viewer on a project they created
+  // - viewer approved profile owner on a project they created
+  const relation = await project.findOne({
+    $or: [
+      { createdBy: profileId, approved_users: viewerId },
+      { createdBy: viewerId, approved_users: profileId },
+    ],
+  }).select('_id');
 
-// async function findFilterHandler(req, res) {
+  return !!relation;
+}
+
+
+// async function findFilterHandler(req, res) {"}
 //   console.log("Decoded user:", req.user);
 
 
@@ -86,6 +217,10 @@ async function findFilterHandler(req, res) {
     const selectedDomains = req.query.domains;
     const rawSearch = (req.query.search || '').trim();
     const primaryDomain = req.query.primaryDomain || '';
+    const commitment = req.query.commitment || '';
+    const timeline = req.query.timeline || '';
+    const teamSize = req.query.teamSize || '';
+    const experience = req.query.experience || '';
 
     let query = {
       status: 'OPEN',
@@ -120,22 +255,35 @@ async function findFilterHandler(req, res) {
           .find(query)
           .sort({ createdOn: -1 });
       } else if (isUserSearch) {
-        // Search by user (creator) when prefixed with '@'
-        const users = await user.find({
+        // Search by user and display profile, ignoring all filters
+        const foundUser = await user.findOne({
           $or: [
             { name: new RegExp(searchValue, 'i') },
             { email: new RegExp(searchValue, 'i') },
           ],
-        }).select('_id');
+        }).select('-password');
 
-        const creatorIds = users.map((u) => u._id);
+        if (foundUser) {
+          const isOwnProfile = foundUser._id.toString() === req.user.id.toString();
+          const phoneVisible = isOwnProfile ? true : await canViewPhone(req.user.id, foundUser._id);
 
-        if (creatorIds.length === 0) {
-          projects = [];
+          // Get profile statistics
+          const stats = await getProfileStats(foundUser._id);
+
+          // Get user activities for calendar
+          const activities = await getUserActivities(foundUser._id);
+
+          return res.render('profile', {
+            user: foundUser,
+            isOwnProfile,
+            canViewPhone: phoneVisible,
+            stats,
+            activities,
+            currentPath: req.path
+          });
         } else {
-          projects = await project
-            .find({ ...query, createdBy: { $in: creatorIds } })
-            .sort({ createdOn: -1 });
+          // No user found, show no projects
+          projects = [];
         }
       } else if (mongoose.isValidObjectId(searchValue)) {
         // Search by exact project ID if it's a valid ObjectId
@@ -159,14 +307,19 @@ async function findFilterHandler(req, res) {
     }
 
     res.render('finder', {
-      projects,
+      projects: projects || [],
       selectedDomains: selectedDomains || [],
       currentUserId: req.user.id,
-      search: rawSearch,
-      primaryDomain,
+      search: rawSearch || '',
+      primaryDomain: primaryDomain || '',
+      commitment: commitment || '',
+      timeline: timeline || '',
+      teamSize: teamSize || '',
+      experience: experience || '',
+      currentPath: req.path,
     });
   } catch (err) {
-    console.error(err);
+    logger.error('%o', err);
     res.status(500).send('Server Error');
   }
 }
@@ -181,6 +334,23 @@ async function applyToProjectHandler(req, res) {
 
     if (!targetProject) {
       return res.status(404).send('Project not found');
+    }
+
+    // If the project is already finished / full, prevent new applications
+    if (targetProject.status !== 'OPEN') {
+      return res.redirect('/project/find');
+    }
+
+    // If the user is already approved, don't allow applying again
+    if (Array.isArray(targetProject.approved_users) && targetProject.approved_users.some(u => u.toString() === userId)) {
+      return res.redirect('/project/find');
+    }
+
+    // If the project has already hit max seats, close it
+    if (Array.isArray(targetProject.approved_users) && targetProject.approved_users.length >= (targetProject.maxApplicants || 1)) {
+      targetProject.status = 'FINISHED';
+      await targetProject.save();
+      return res.redirect('/project/find');
     }
 
     // Check if user has already applied
@@ -230,23 +400,21 @@ async function myApplicationHandler(req, res) {
 
     // Filter out approved ones and add local status tag (pending/rejected)
     const filtered = appliedProjects
-      .filter(proj => !proj.approved_user || proj.approved_user.toString() !== userId)
+      .filter(proj => {
+        const approved = Array.isArray(proj.approved_users) ? proj.approved_users.some(u => u.toString() === userId) : false;
+        return !approved;
+      })
       .map(proj => {
-        let status;
-        if (!proj.approved_user) {
-          status = 'Pending';
-        } else {
-          status = 'Rejected';
-        }
+        let status = 'Pending';
         return {
           ...proj.toObject(),
           applicationStatus: status
         };
       });
 
-    res.render('application', { projects: filtered });
+    res.render('application', { projects: filtered, currentPath: req.path });
   } catch (err) {
-    console.error("Error loading applications:", err);
+    logger.error('Error loading applications: %o', err);
     res.status(500).send("Server Error");
   }
 }
@@ -256,22 +424,27 @@ async function projectApplicantsHandler(req, res) {
   try {
     const project_ = await project.findOne({
       _id: req.params.projectId,
-    }).populate({
-      path: 'applicants.user',
-      model: 'user'
-    });
+    })
+      .populate({
+        path: 'applicants.user',
+        model: 'user'
+      })
+      .populate({
+        path: 'approved_users',
+        model: 'user'
+      });
 
     if (!project_) return res.status(404).send('Project not found or is already finished');
 
-    res.render('applicants', { project_ });
+    res.render('applicants', { project_, currentPath: req.path });
   } catch (err) {
-    console.error(err);
+    logger.error('%o', err);
     res.status(500).send('Server Error');
   }
 }
 
 
-async function IDKHandler(req, res) {
+async function approveApplicantHandler(req, res) {
   try {
     const { projectId, applicantId } = req.params;
 
@@ -281,24 +454,173 @@ async function IDKHandler(req, res) {
       return res.status(404).send('Project not found');
     }
 
+    // Check if user is the project creator
+    if (targetProject.createdBy.toString() !== req.user.id.toString()) {
+      return res.status(403).send('Unauthorized');
+    }
+
     // Check if the applicant exists in the applicants list
     const isApplicantPresent = targetProject.applicants.some(app => app.user.toString() === applicantId);
     if (!isApplicantPresent) {
       return res.status(404).send('Applicant not found in the list');
     }
 
-    // Set the approved_user
-    targetProject.approved_user = applicantId;
-    targetProject.status = 'FINISHED';
+    // Check if already approved
+    if (Array.isArray(targetProject.approved_users) && targetProject.approved_users.some(u => u.toString() === applicantId)) {
+      return res.redirect(`/project/${projectId}/applicants`);
+    }
 
-    // Optionally, remove the applicant from the applicants array
+    // Check if seats are available
+    const currentApproved = (targetProject.approved_users && targetProject.approved_users.length) || 0;
+    const maxSeats = targetProject.maxApplicants || 1;
+    if (currentApproved >= maxSeats) {
+      return res.redirect(`/project/${projectId}/applicants`);
+    }
+
+    // Ensure approved_users exists and add this applicant
+    if (!Array.isArray(targetProject.approved_users)) {
+      targetProject.approved_users = [];
+    }
+
+    if (!targetProject.approved_users.some(u => u.toString() === applicantId)) {
+      targetProject.approved_users.push(applicantId);
+    }
+
+    // Remove the applicant from the applicants array
+    targetProject.applicants = targetProject.applicants.filter(app => app.user.toString() !== applicantId);
+
+    // Update project status to IN_PROGRESS if someone is approved
+    if (targetProject.status === 'OPEN') {
+      targetProject.status = 'IN_PROGRESS';
+    }
+
+    // Close the project if we've filled all seats
+    if (targetProject.approved_users.length >= maxSeats) {
+      targetProject.status = 'FINISHED';
+    }
+
+    // Save the changes
+    await targetProject.save();
+
+    res.redirect(`/project/${projectId}/applicants`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+}
+
+async function rejectApplicantHandler(req, res) {
+  try {
+    const { projectId, applicantId } = req.params;
+
+    // Find the project
+    const targetProject = await project.findById(projectId);
+    if (!targetProject) {
+      return res.status(404).send('Project not found');
+    }
+
+    // Check if user is the project creator
+    if (targetProject.createdBy.toString() !== req.user.id.toString()) {
+      return res.status(403).send('Unauthorized');
+    }
+
+    // Check if the applicant exists in the applicants list
+    const isApplicantPresent = targetProject.applicants.some(app => app.user.toString() === applicantId);
+    if (!isApplicantPresent) {
+      return res.status(404).send('Applicant not found in the list');
+    }
+
+    // Ensure rejected_users exists and add this applicant
+    if (!Array.isArray(targetProject.rejected_users)) {
+      targetProject.rejected_users = [];
+    }
+
+    if (!targetProject.rejected_users.some(u => u.toString() === applicantId)) {
+      targetProject.rejected_users.push(applicantId);
+    }
+
+    // Remove the applicant from the applicants array
     targetProject.applicants = targetProject.applicants.filter(app => app.user.toString() !== applicantId);
 
     // Save the changes
     await targetProject.save();
 
-    // ✅ FIX: Change this redirect from plural to singular
-    res.redirect('/project/show'); // Was /projects/show
+    res.redirect(`/project/${projectId}/applicants`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+}
+
+// ✅ NEW FUNCTION: Remove approved team member
+async function removeApprovedUserHandler(req, res) {
+  try {
+    const { projectId, userId } = req.params;
+
+    // Find the project
+    const targetProject = await project.findById(projectId);
+    if (!targetProject) {
+      return res.status(404).send('Project not found');
+    }
+
+    // Check if user is the project creator
+    if (targetProject.createdBy.toString() !== req.user.id.toString()) {
+      return res.status(403).send('Unauthorized');
+    }
+
+    // Check if the user is in the approved list
+    const isApproved = Array.isArray(targetProject.approved_users) && targetProject.approved_users.some(u => u.toString() === userId);
+    if (!isApproved) {
+      return res.status(404).send('User not found in approved list');
+    }
+
+    // Remove the user from approved_users array
+    targetProject.approved_users = targetProject.approved_users.filter(u => u.toString() !== userId);
+
+    // Revert project status if needed
+    if (targetProject.status === 'FINISHED' && targetProject.approved_users.length > 0) {
+      targetProject.status = 'IN_PROGRESS';
+    } else if (targetProject.approved_users.length === 0) {
+      targetProject.status = 'OPEN';
+    }
+
+    // Save the changes
+    await targetProject.save();
+
+    res.redirect(`/project/${projectId}/applicants`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+}
+
+async function completeProjectHandler(req, res) {
+  try {
+    const { projectId } = req.params;
+
+    // Find the project
+    const targetProject = await project.findById(projectId);
+    if (!targetProject) {
+      return res.status(404).send('Project not found');
+    }
+
+    // Check if user is the project creator
+    if (targetProject.createdBy.toString() !== req.user.id.toString()) {
+      return res.status(403).send('Unauthorized');
+    }
+
+    // Only allow completion if project is OPEN or IN_PROGRESS
+    if (targetProject.status === 'FINISHED') {
+      return res.redirect('/project/show');
+    }
+
+    // Set status to FINISHED
+    targetProject.status = 'FINISHED';
+
+    // Save the changes
+    await targetProject.save();
+
+    res.redirect('/project/show');
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -308,20 +630,34 @@ async function IDKHandler(req, res) {
 async function showHistoryPage(req, res) {
   const userId = req.user.id;
 
-  const createdHistory = await project.find({
+  // Active projects (both created and joined)
+  const createdActive = await project.find({
+    createdBy: userId,
+    status: { $in: ['OPEN', 'IN_PROGRESS'] },
+  }).populate('approved_users').sort({ createdOn: -1 });
+
+  const joinedActive = await project.find({
+    approved_users: userId,
+    status: { $in: ['OPEN', 'IN_PROGRESS'] },
+  }).populate('createdBy').sort({ createdOn: -1 });
+
+  // Completed projects
+  const createdFinished = await project.find({
     createdBy: userId,
     status: 'FINISHED',
-  }).populate('approved_user');
+  }).populate('approved_users').sort({ createdOn: -1 });
 
-  const appliedHistory = await project.find({
-    approved_user: userId,
+  const appliedFinished = await project.find({
+    approved_users: userId,
     status: 'FINISHED',
-  }).populate('createdBy');
+  }).populate('createdBy').sort({ createdOn: -1 });
 
   res.render('history', {
-    createdHistory,
-    appliedHistory,
-    show: 'applied', // default toggle view
+    createdActive,
+    joinedActive,
+    createdFinished,
+    appliedFinished,
+    currentPath: req.path,
   });
 }
 
@@ -330,10 +666,13 @@ module.exports = {
   projectMaker,
   showAll,
   findFilterHandler,
-  applyToProjectHandler, // ✅ EXPORT THE NEW FUNCTION
+  applyToProjectHandler,
   myApplicationHandler,
   projectApplicantsHandler,
-  IDKHandler
+  approveApplicantHandler,
+  rejectApplicantHandler,
+  removeApprovedUserHandler,
+  completeProjectHandler
 };
 
 

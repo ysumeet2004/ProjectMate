@@ -1,36 +1,79 @@
+<a href="#" class="skip-link">Skip to content</a>
 <nav class="pm-navbar">
   <div class="pm-navbar-inner">
+    <!-- LEFT: Logo & Brand -->
     <div class="pm-navbar-left">
-      <a href="/" class="pm-navbar-logo">
-        <span style="font-weight:600;font-size:1.1rem;color:#f9fafb;">P</span>
+      <a href="/" class="pm-navbar-logo pm-tooltip" data-tooltip="Back to home">
+        <svg viewBox="0 0 40 40" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+          <!-- Left node -->
+          <circle cx="13" cy="20" r="4" fill="#7c3aed"/>
+          <!-- Top-right node -->
+          <circle cx="27" cy="13" r="4" fill="#a78bfa"/>
+          <!-- Bottom-right node -->
+          <circle cx="27" cy="27" r="4" fill="#c4b5fd"/>
+          <!-- Left to top connector -->
+          <line x1="17" y1="20" x2="23" y2="14.5" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Left to bottom connector -->
+          <line x1="17" y1="20" x2="23" y2="25.5" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Vertical dashed connector between right nodes -->
+          <line x1="27" y1="17" x2="27" y2="23" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="2 2"/>
+        </svg>
       </a>
-      <a href="/" class="pm-navbar-brand">ProjectMate</a>
+      <a href="/" class="pm-navbar-brand pm-link-hover">ProjectMate</a>
     </div>
 
-    <div class="pm-navbar-center d-none d-md-flex">
-      <a href="/" class="pm-nav-link pm-nav-link-active">Home</a>
-      <a href="/project/find" class="pm-nav-link">Browse</a>
-      <a href="/project/create" class="pm-nav-link">Create</a>
+    <!-- CENTER: Navigation Links (hidden on mobile) -->
+    <div class="pm-navbar-center d-none d-lg-flex">
+      <a href="/" class="pm-nav-link <%= currentPath === '/' ? 'pm-nav-link-active' : '' %> pm-tooltip" data-tooltip="Homepage" <%= currentPath === '/' ? 'aria-current="page"' : '' %>>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="pm-nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Home
+      </a>
+      <a href="/project/find" class="pm-nav-link <%= currentPath === '/project/find' ? 'pm-nav-link-active' : '' %> pm-tooltip" data-tooltip="Discover projects to join" <%= currentPath === '/project/find' ? 'aria-current="page"' : '' %>>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="pm-nav-icon"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+        Browse
+      </a>
+      <a href="/project/create" class="pm-nav-link <%= currentPath === '/project/create' ? 'pm-nav-link-active' : '' %> pm-tooltip" data-tooltip="Start a new project" <%= currentPath === '/project/create' ? 'aria-current="page"' : '' %>>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="pm-nav-icon"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Create
+      </a>
       <% if (locals.user) { %>
-        <a href="/project/show" class="pm-nav-link">My Projects</a>
-        <a href="/project/applications" class="pm-nav-link">Applications</a>
-        <a href="/project/history" class="pm-nav-link">History</a>
+        <a href="/project/show" class="pm-nav-link <%= currentPath === '/project/show' ? 'pm-nav-link-active' : '' %> pm-tooltip" data-tooltip="Your created projects">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="pm-nav-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+          My Projects
+        </a>
+        <a href="/project/applications" class="pm-nav-link <%= currentPath === '/project/applications' ? 'pm-nav-link-active' : '' %> pm-tooltip" data-tooltip="Applications you submitted">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="pm-nav-icon"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+          Applications
+        </a>
+        <a href="/project/history" class="pm-nav-link <%= currentPath === '/project/history' ? 'pm-nav-link-active' : '' %> pm-tooltip" data-tooltip="View completed & active projects">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="pm-nav-icon"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          History
+        </a>
       <% } %>
     </div>
 
+    <!-- RIGHT: User Status & Actions -->
     <div class="pm-navbar-right">
       <% if (locals.user) { %>
-        <div class="pm-pill d-none d-sm-inline-flex">
-          Signed in as&nbsp;<strong><%= user.name.split(' ')[0] %></strong>
+        <div class="pm-avatar-dropdown">
+          <button class="pm-avatar-toggle" aria-label="User menu" aria-expanded="false">
+            <div class="pm-avatar-circle" title="<%= user.name.split(' ')[0] %>">
+              <%= user.name.split(' ')[0].charAt(0).toUpperCase() %>
+            </div>
+            <span class="pm-avatar-name"><%= user.name.split(' ')[0] %></span>
+          </button>
+          <div class="pm-avatar-menu">
+            <a href="/user/profile" class="pm-avatar-menu-item">Profile</a>
+            <a href="/user/settings" class="pm-avatar-menu-item">Settings</a>
+            <a href="/user/logout" class="pm-avatar-menu-item pm-avatar-menu-logout">Logout</a>
+          </div>
         </div>
-        <a href="/user/profile" class="pm-btn pm-btn-ghost d-none d-sm-inline-flex">Profile</a>
-        <a href="/user/logout" class="pm-btn pm-btn-primary">Logout</a>
       <% } else { %>
-        <div class="pm-pill d-none d-sm-inline-flex">
+        <div class="pm-pill d-none d-md-inline-flex">
           Collaborative project matcher
         </div>
-        <a href="/user/login" class="pm-btn pm-btn-ghost">Log in</a>
-        <a href="/user/signup" class="pm-btn pm-btn-primary">Get started</a>
+        <a href="/user/login" class="pm-btn pm-btn-secondary-new pm-tooltip" data-tooltip="Sign in to your account">Log in</a>
+        <a href="/user/signup" class="pm-btn pm-btn-primary pm-tooltip" data-tooltip="Create a new account">Get started</a>
       <% } %>
     </div>
   </div>

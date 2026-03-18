@@ -1,0 +1,30 @@
+# ProjectMate - Collaboration Platform
+# Allow search engines to crawl the platform
+
+User-agent: *
+Allow: /
+Allow: /project/find
+Allow: /project/show
+Allow: /user/
+Allow: /css/
+Allow: /js/
+Allow: /images/
+
+# Disallow private/admin pages
+Disallow: /user/logout
+Disallow: /user/login
+Disallow: /user/signup
+Disallow: /admin/
+Disallow: */edit
+Disallow: */delete
+Disallow: */manage
+
+# Disallow rate-limited endpoints
+Disallow: /api/
+Disallow: /auth/
+
+# Crawl delays to avoid server overload
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://projectmate.com/sitemap.xml

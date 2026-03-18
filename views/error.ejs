@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <%- include('./partials/head') %>
+    <title>Error</title>
+  </head>
+  <body class="pm-body">
+    <%- include('./partials/navbar') %>
+    <main class="pm-page">
+      <div class="pm-card" style="max-width:820px;margin:2rem auto;">
+        <h2>Something went wrong</h2>
+        <p><%= error && error.message ? error.message : 'An unexpected error occurred.' %></p>
+        <% if (error && error.stack) { %>
+          <pre style="white-space:pre-wrap; color: #f0f0f0; background: #111; padding: 1rem; border-radius:8px;"><%= error.stack %></pre>
+        <% } %>
+      </div>
+    </main>
+    <%- include('./partials/footer') %>
+    <%- include('./partials/scripts') %>
+  </body>
+</html>

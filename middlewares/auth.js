@@ -50,22 +50,32 @@ module.exports = async function verifyToken(req, res, next) {
     const token = req.cookies.token || req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
-      console.log('❌ No token found');
-      return res.redirect('/login');
+      console.log('❌ No token found for', req.originalUrl);
+      // If request expects JSON (XHR / API), return 401
+      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      return res.redirect('/user/login');
     }
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (!decoded || !decoded.id) {
       console.log('❌ Invalid token payload');
-      return res.redirect('/login');
+      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+      return res.redirect('/user/login');
     }
 
-    // ✅ Fetch user from DB and attach to req
+    // Fetch user from DB and attach to req
     const user = await userModel.findById(decoded.id);
     if (!user) {
       console.log('❌ No user found for this token');
-      return res.redirect('/login');
+      if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+      return res.redirect('/user/login');
     }
 
     req.user = {
@@ -74,9 +84,16 @@ module.exports = async function verifyToken(req, res, next) {
       email: user.email,
     };
 
+    // Also expose user to templates
+    res.locals.user = req.user;
+
     next();
   } catch (err) {
     console.error('🔥 Token verification error:', err.message);
-    res.redirect('/login');
+    if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('application/json') !== -1)) {
+      return res.status(401).json({ error: 'Token verification failed' });
+    }
+    res.clearCookie('token', { path: '/' });
+    return res.redirect('/user/login');
   }
 };

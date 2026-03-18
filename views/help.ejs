@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head') %>
+  <title>Help & Support · ProjectMate</title>
+</head>
+<body class="pm-body">
+  <div class="pm-grid-overlay"></div>
+  
+  <%- include('./partials/navbar') %>
+
+  <main class="pm-page">
+    <section class="pm-hero-shell" style="padding: 3rem 1.5rem; max-width: 900px;">
+      <div>
+        <h1 class="pm-hero-title">Help & Support</h1>
+        <p class="pm-hero-subtitle">Find answers to common questions about ProjectMate</p>
+      </div>
+    </section>
+
+    <!-- Search -->
+    <section style="max-width: 900px; margin: 2rem auto 3rem; padding: 0 1.5rem;">
+      <input 
+        type="text" 
+        id="searchFaq" 
+        class="pm-input" 
+        placeholder="Search help articles..."
+        style="font-size: 1rem; padding: 0.75rem 1rem;"
+      />
+    </section>
+
+    <!-- FAQ Sections -->
+    <section style="max-width: 900px; margin: 0 auto; padding: 0 1.5rem; margin-bottom: 4rem;">
+      
+      <!-- Getting Started -->
+      <div class="pm-faq-section">
+        <h2 class="pm-faq-section-title">🚀 Getting Started</h2>
+        
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>How do I create an account?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Visit the <a href="/signup">Sign Up page</a> and enter your email, name, and password. Verify your email and you're ready to start collaborating!</p>
+          </div>
+        </div>
+
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>How do I find projects?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Navigate to <a href="/project/find">Browse Projects</a> and filter by domain, skills, and other criteria. Use the search bar to find specific projects or creators.</p>
+          </div>
+        </div>
+
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>How do I create a project?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Go to your dashboard and click "Create Project" or visit <a href="/project/create">Create a Project</a>. Fill in your project details, skills needed, and team size. Your project will be visible to the community for 30 days.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collaboration -->
+      <div class="pm-faq-section">
+        <h2 class="pm-faq-section-title">👥 Collaboration & Applications</h2>
+        
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>How do I apply to a project?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Click the "Apply" button on any project card. Your profile will be submitted to the project creator. They can approve or reject your application.</p>
+          </div>
+        </div>
+
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>Can I message project creators?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Yes! Once you apply to a project, you can message the creator directly within the platform. Visit your <a href="/project/applications">Applications</a> page to start a conversation.</p>
+          </div>
+        </div>
+
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>How do I manage applicants for my project?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Visit <a href="/project/show">My Projects</a> and click on a project to see all applicants. You can review their profiles, message them, and approve or reject applications. Based on max seats available for your project.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile & Trust -->
+      <div class="pm-faq-section">
+        <h2 class="pm-faq-section-title">⭐ Profile & Trust</h2>
+        
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>How do I build credibility on ProjectMate?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Complete projects, gather positive reviews, and maintain a professional profile. Your rating and completed projects count towards your trust score, making you more attractive to project creators.</p>
+          </div>
+        </div>
+
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>How do reviews work?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>After completing a project, team members can leave reviews for each other rating communication, reliability, skills, and collaboration. These reviews are public and help build your profile reputation.</p>
+          </div>
+        </div>
+
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>Can I update my profile?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Yes! Visit your <a href="/user/profile">Profile</a> page to update your bio, skills, contact information, portfolio links, and other details. Keep it fresh to attract collaborators.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Safety & Security -->
+      <div class="pm-faq-section">
+        <h2 class="pm-faq-section-title">🔒 Safety & Security</h2>
+        
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>Is my password secure?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Yes. We use industry-standard bcrypt hashing for password storage and HTTPS encryption for all connections. Never share your password, and enable two-factor authentication when available.</p>
+          </div>
+        </div>
+
+        <div class="pm-faq-item">
+          <button class="pm-faq-question" onclick="toggleAnswer(this)">
+            <span>How do I report scams or inappropriate behavior?</span>
+            <span class="pm-faq-toggle">+</span>
+          </button>
+          <div class="pm-faq-answer">
+            <p>Use the report button on any user profile or project page, or email our trust & safety team at trust@projectmate.com. We take all reports seriously and investigate promptly.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="pm-faq-section">
+        <h2 class="pm-faq-section-title">📧 Still Need Help?</h2>
+        <div style="padding: 2rem; background: rgba(167, 139, 250, 0.1); border: 1px solid var(--pm-border-subtle); border-radius: var(--pm-radius-lg); text-align: center;">
+          <p style="margin-bottom: 1rem; font-size: 1.1rem; font-weight: 500;">Contact our support team</p>
+          <p style="margin-bottom: 1.5rem; color: var(--pm-subtext);">We're here to help! Email us at <strong>support@projectmate.com</strong></p>
+          <p style="font-size: 0.9rem; color: var(--pm-subtext);">Response time: 24-48 hours</p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <%- include('./partials/footer') %>
+  <%- include('./partials/scripts') %>
+
+  <style>
+    .pm-faq-section {
+      margin-bottom: 3rem;
+    }
+
+    .pm-faq-section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--pm-accent-strong);
+    }
+
+    .pm-faq-item {
+      margin-bottom: 1rem;
+      border: 1px solid var(--pm-border-subtle);
+      border-radius: var(--pm-radius-lg);
+      overflow: hidden;
+    }
+
+    .pm-faq-question {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: transparent;
+      border: none;
+      color: var(--pm-text);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .pm-faq-question:hover {
+      background: rgba(167, 139, 250, 0.05);
+      color: var(--pm-accent);
+    }
+
+    .pm-faq-toggle {
+      font-size: 1.5rem;
+      transition: transform 0.2s ease;
+    }
+
+    .pm-faq-question.active .pm-faq-toggle {
+      transform: rotate(45deg);
+    }
+
+    .pm-faq-answer {
+      display: none;
+      padding: 0 1.5rem 1.5rem;
+      color: var(--pm-subtext);
+      line-height: 1.6;
+    }
+
+    .pm-faq-answer.active {
+      display: block;
+    }
+
+    .pm-faq-answer a {
+      color: var(--pm-accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .pm-faq-answer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <script>
+    function toggleAnswer(button) {
+      const answer = button.nextElementSibling;
+      const isActive = answer.classList.contains('active');
+      
+      // Close all other answers
+      document.querySelectorAll('.pm-faq-answer.active').forEach(el => {
+        el.classList.remove('active');
+        el.previousElementSibling.classList.remove('active');
+      });
+      
+      // Toggle current answer
+      if (!isActive) {
+        answer.classList.add('active');
+        button.classList.add('active');
+      }
+    }
+
+    // Search FAQ
+    document.getElementById('searchFaq')?.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      document.querySelectorAll('.pm-faq-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(term) ? 'block' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

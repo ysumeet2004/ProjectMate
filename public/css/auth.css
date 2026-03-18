@@ -1,9 +1,23 @@
+:root {
+  /* Reuse main design system variables */
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --pm-bg: #03040a;
+  --pm-text: #ffffff;
+  --pm-subtext: #d0d0d0;
+  --pm-accent: #a78bfa;
+  --pm-accent-glow: rgba(167, 139, 250, 0.4);
+  --pm-accent-strong: #c4b5fd;
+  --pm-radius-lg: 16px;
+  --pm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
 body {
   margin: 0;
   padding: 0;
-  background-color: #0b0014;
-  color: white;
-  font-family: 'Poppins', sans-serif;
+  background-color: var(--pm-bg);
+  color: var(--pm-text);
+  font-family: var(--font-body);
   overflow: hidden;
 }
 
@@ -25,7 +39,7 @@ body {
   overflow: hidden;
   border-radius: 20px;
   margin: 20px;
-  box-shadow: 0 0 30px rgba(150, 50, 255, 0.3);
+  box-shadow: 0 0 30px var(--pm-accent-glow);
 }
 
 .image-card img {
@@ -47,10 +61,11 @@ body {
   transform: translateX(-50%);
   font-size: 4rem;
   font-weight: 700;
-  color: #fff;
-  text-shadow: 0 0 20px #b066ff, 0 0 30px #a94fff;
+  color: var(--pm-text);
+  text-shadow: 0 0 20px var(--pm-accent), 0 0 30px var(--pm-accent-strong);
   z-index: 3;
   letter-spacing: 1px;
+  font-family: var(--font-display);
 }
 
 /* --- TAGLINE BELOW BRAND --- */
@@ -60,8 +75,8 @@ body {
   left: 50%;
   transform: translateX(-50%);
   font-size: 1.2rem;
-  color: #d8b6ff;
-  text-shadow: 0 0 10px #a94fff;
+  color: var(--pm-subtext);
+  text-shadow: 0 0 10px var(--pm-accent-soft, rgba(167, 139, 250, 0.15));
   letter-spacing: 2px;
   z-index: 3;
   font-weight: 400;
@@ -70,31 +85,36 @@ body {
 /* --- CENTERED AUTH BOX --- */
 .auth-container {
   position: absolute;
-  top: 60%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
+  width: 100%;
+  max-width: 360px;
+  padding: 0 1rem;
 }
 
 .auth-box {
   background: rgba(0, 0, 0, 0.8);
   padding: 40px;
-  border-radius: 20px;
-  width: 320px;
+  border-radius: var(--pm-radius-lg);
   text-align: center;
-  box-shadow: 0 0 40px rgba(183, 80, 255, 0.6);
+  box-shadow: var(--pm-shadow-lg), 0 0 40px var(--pm-accent-glow);
   animation: glow 2s infinite alternate;
+  border: 1px solid rgba(167, 139, 250, 0.2);
 }
 
 @keyframes glow {
-  from { box-shadow: 0 0 20px rgba(183, 80, 255, 0.4); }
-  to { box-shadow: 0 0 40px rgba(183, 80, 255, 0.8); }
+  from { box-shadow: var(--pm-shadow-lg), 0 0 20px var(--pm-accent-glow); }
+  to { box-shadow: var(--pm-shadow-lg), 0 0 40px var(--pm-accent-glow); }
 }
 
 .auth-box h2 {
   margin-bottom: 20px;
-  color: #fff;
-  text-shadow: 0 0 10px #c77fff;
+  color: var(--pm-text);
+  text-shadow: 0 0 10px var(--pm-accent);
+  font-family: var(--font-display);
+  font-size: 1.875rem;
 }
 
 .auth-box input {
@@ -102,11 +122,24 @@ body {
   padding: 10px;
   margin: 10px 0;
   border-radius: 8px;
-  border: none;
+  border: 1px solid rgba(167, 139, 250, 0.3);
   outline: none;
-  background-color: #1b012c;
-  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: var(--pm-text);
   font-size: 14px;
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
+}
+
+.auth-box input:focus {
+  border-color: var(--pm-accent);
+  box-shadow: 0 0 12px var(--pm-accent-glow);
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.auth-box input::placeholder {
+  color: var(--pm-subtext);
+  opacity: 0.7;
 }
 
 .auth-box button {
@@ -115,23 +148,32 @@ body {
   margin-top: 10px;
   border: none;
   border-radius: 8px;
-  background-color: #a94fff;
-  color: white;
+  background-color: var(--pm-accent);
+  color: var(--pm-text);
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s;
+  font-family: var(--font-display);
 }
 
 .auth-box button:hover {
-  background-color: #b066ff;
+  background-color: var(--pm-accent-strong);
   transform: scale(1.03);
+  box-shadow: 0 0 20px var(--pm-accent-glow);
+}
+
+.auth-box button:active {
+  transform: scale(0.98);
 }
 
 .auth-box a {
-  color: #c77fff;
+  color: var(--pm-accent);
   text-decoration: none;
+  transition: all 0.3s;
 }
 
 .auth-box a:hover {
+  color: var(--pm-accent-strong);
   text-decoration: underline;
 }

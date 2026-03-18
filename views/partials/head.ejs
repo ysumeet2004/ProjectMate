@@ -1,4 +1,82 @@
+<title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'ProjectMate - Collaborate Like a Pro | Find & Build Amazing Projects' %></title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'ProjectMate - Collaborate like a pro. Connect with creators, developers, and innovators to build amazing projects together.' %>">
+<meta name="theme-color" content="#000000">
+<!-- Open Graph Meta Tags (Social Sharing) -->
+<meta property="og:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'ProjectMate - Collaborate Like a Pro' %>">
+<meta property="og:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : 'Connect with creators, developers, and innovators to build amazing projects together.' %>">
+<meta property="og:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : 'https://projectmate.com/images/og-image.png' %>">
+<meta property="og:url" content="<%= typeof ogUrl !== 'undefined' ? ogUrl : 'https://projectmate.com' %>">
+<meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+
+<!-- Twitter Card Tags -->
+<meta name="twitter:card" content="<%= typeof twitterCard !== 'undefined' ? twitterCard : 'summary_large_image' %>">
+<meta name="twitter:title" content="<%= typeof twitterTitle !== 'undefined' ? twitterTitle : 'ProjectMate - Collaborate Like a Pro' %>">
+<meta name="twitter:description" content="<%= typeof twitterDescription !== 'undefined' ? twitterDescription : 'Connect with creators to build amazing projects together.' %>">
+<meta name="twitter:image" content="<%= typeof twitterImage !== 'undefined' ? twitterImage : 'https://projectmate.com/images/twitter-image.png' %>">
+
+<!-- Canonical Link -->
+<link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' ? canonicalUrl : 'https://projectmate.com' %>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
 <link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/states.css">
+<link rel="stylesheet" href="/css/mobile.css">
+<link rel="stylesheet" href="/css/custom-cursor.css">
+
+<!-- JSON-LD Schema.org Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "ProjectMate",
+  "url": "https://projectmate.com",
+  "logo": "https://projectmate.com/images/logo.png",
+  "description": "Connect with creators, developers, and innovators to build amazing projects together.",
+  "sameAs": [
+    "https://twitter.com/projectmate",
+    "https://linkedin.com/company/projectmate"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "Customer Support",
+    "email": "support@projectmate.com"
+  }
+}
+</script>
+
+<% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
+<script type="application/ld+json">
+<%- JSON.stringify(jsonLd) %>
+</script>
+<% } %>
+
+<!-- Breadcrumb Schema -->
+<% if (typeof breadcrumbs !== 'undefined' && breadcrumbs && breadcrumbs.length > 0) { %>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    <% breadcrumbs.forEach((item, index) => { %>
+    {
+      "@type": "ListItem",
+      "position": <%= index + 1 %>,
+      "name": "<%= item.name %>",
+      "item": "https://projectmate.com<%= item.url %>"
+    }<%= index < breadcrumbs.length - 1 ? ',' : '' %>
+    <% }); %>
+  ]
+}
+</script>
+<% } %>
+
+<!-- Project/Product Schema -->
+<% if (typeof projectSchema !== 'undefined' && projectSchema) { %>
+<script type="application/ld+json">
+<%- JSON.stringify(projectSchema) %>
+</script>
+<% } %>

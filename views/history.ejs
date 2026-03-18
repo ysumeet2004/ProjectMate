@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <%- include('./partials/head') %>
-    <title>History · ProjectMate</title>
+    <title>Projects · ProjectMate</title>
   </head>
 
   <body class="pm-body">
@@ -13,67 +13,244 @@
     <main class="pm-page">
       <header class="pm-page-header">
         <div>
-          <h1 class="pm-page-title">Project history</h1>
+          <h1 class="pm-page-title">Your projects</h1>
           <p class="pm-page-subtitle">
-            Finished projects you led and collaborations you joined, so you can quickly revisit what you shipped.
+            Track your active collaborations and completed projects at a glance.
           </p>
         </div>
       </header>
 
-      <section class="pm-section-grid">
-        <article class="pm-card">
-          <div class="pm-card-header">
-            <div class="pm-card-title">Projects you created</div>
-          </div>
-          <% if (!createdHistory || createdHistory.length === 0) { %>
-            <p class="pm-list-meta mt-1">No project history available.</p>
-          <% } else { %>
-            <div class="pm-list mt-2">
-              <% createdHistory.forEach(project => { %>
-                <div class="pm-list-row">
-                  <div class="pm-list-main">
-                    <strong><%= project.title %></strong>
-                    <div class="pm-list-meta"><%= project.domain %></div>
+      <!-- ACTIVE PROJECTS SECTION -->
+      <div class="pm-projects-section">
+        <h2 class="pm-section-title">🚀 Active Projects</h2>
+        <div class="pm-section-grid">
+          <% if (createdActive && createdActive.length > 0) { %>
+            <% createdActive.forEach(proj => { %>
+              <article class="pm-card pm-card-active">
+                <div class="pm-card-header">
+                  <div>
+                    <div class="pm-card-title"><%= proj.title %></div>
+                    <div class="pm-card-meta"><%= proj.domain %></div>
                   </div>
-                  <div class="text-end">
-                    <div class="pm-list-meta">
-                      Approved: <%= project.approved_user?.email || 'N/A' %>
+                  <div class="pm-project-status" style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #3b82f6; padding: 0.35rem 0.7rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <%= proj.status %>
+                  </div>
+                </div>
+                <p class="pm-card-subtitle mb-2"><%= proj.desc %></p>
+                
+                <div class="pm-project-stats" style="display: flex; gap: 1.5rem; margin: 1rem 0; padding: 1rem 0; border-top: 1px solid var(--pm-border-subtle); border-bottom: 1px solid var(--pm-border-subtle); font-size: 0.85rem;">
+                  <div>
+                    <span class="pm-list-meta">Team Members:</span>
+                    <div style="font-weight: 600; color: var(--pm-text);">
+                      <%= (proj.approved_users && proj.approved_users.length) || 0 %> / <%= proj.maxApplicants || 1 %>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="pm-list-meta">Created:</span>
+                    <div style="font-weight: 600; color: var(--pm-text);">
+                      <%= new Date(proj.createdOn).toLocaleDateString() %>
                     </div>
                   </div>
                 </div>
-              <% }) %>
-            </div>
-          <% } %>
-        </article>
 
-        <article class="pm-card">
-          <div class="pm-card-header">
-            <div class="pm-card-title">Projects you joined</div>
-          </div>
-          <% if (!appliedHistory || appliedHistory.length === 0) { %>
-            <p class="pm-list-meta mt-1">No application history available.</p>
-          <% } else { %>
-            <div class="pm-list mt-2">
-              <% appliedHistory.forEach(project => { %>
-                <div class="pm-list-row">
-                  <div class="pm-list-main">
-                    <strong><%= project.title %></strong>
-                    <div class="pm-list-meta"><%= project.domain %></div>
+                <div style="margin-top: 1rem;">
+                  <a href="/project/<%= proj._id %>/applicants" class="pm-btn pm-btn-primary w-100 justify-content-center" style="font-size: 0.9rem;">
+                    Manage Team
+                  </a>
+                </div>
+              </article>
+            <% }) %>
+          <% } %>
+
+          <% if (joinedActive && joinedActive.length > 0) { %>
+            <% joinedActive.forEach(proj => { %>
+              <article class="pm-card pm-card-active">
+                <div class="pm-card-header">
+                  <div>
+                    <div class="pm-card-title"><%= proj.title %></div>
+                    <div class="pm-card-meta"><%= proj.domain %></div>
                   </div>
-                  <div class="text-end">
-                    <div class="pm-list-meta">
-                      Owner: <%= project.createdBy?.email || 'N/A' %>
+                  <div class="pm-project-status" style="background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #22c55e; padding: 0.35rem 0.7rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Joined ✓
+                  </div>
+                </div>
+                <p class="pm-card-subtitle mb-2"><%= proj.desc %></p>
+                
+                <div class="pm-project-info" style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; padding: 1rem 0; border-top: 1px solid var(--pm-border-subtle); border-bottom: 1px solid var(--pm-border-subtle); font-size: 0.85rem;">
+                  <div>
+                    <span class="pm-list-meta">Led by:</span>
+                    <div style="font-weight: 600; color: var(--pm-text);">
+                      <% if (proj.createdBy && proj.createdBy.email) { %>
+                        <%= proj.createdBy.email %>
+                      <% } else { %>
+                        Unknown
+                      <% } %>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="pm-list-meta">Status:</span>
+                    <div style="font-weight: 600; color: var(--pm-text);">
+                      <%= proj.status === 'IN_PROGRESS' ? '⚡ In Progress' : '🔄 Planning' %>
                     </div>
                   </div>
                 </div>
-              <% }) %>
+
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--pm-subtext);">
+                  📅 Joined on <%= new Date(proj.createdOn).toLocaleDateString() %>
+                </div>
+              </article>
+            <% }) %>
+          <% } %>
+
+          <% if ((!createdActive || createdActive.length === 0) && (!joinedActive || joinedActive.length === 0)) { %>
+            <div class="pm-empty-state" style="grid-column: 1 / -1;">
+              <div class="pm-empty-state-icon">✨</div>
+              <h3 class="pm-empty-state-title">No active projects</h3>
+              <p class="pm-empty-state-subtitle">You don't have any active projects right now. Time to create or join one!</p>
+              <div class="pm-empty-state-actions">
+                <a href="/project/find" class="pm-btn pm-btn-primary">Find Projects</a>
+                <a href="/project/create" class="pm-btn pm-btn-ghost">Create a Project</a>
+              </div>
             </div>
           <% } %>
-        </article>
-      </section>
+        </div>
+      </div>
+
+      <!-- COMPLETED PROJECTS SECTION -->
+      <div class="pm-projects-section" style="margin-top: 3rem;">
+        <h2 class="pm-section-title">✅ Completed Projects</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <!-- Projects Created -->
+          <% if (createdFinished && createdFinished.length > 0) { %>
+            <article class="pm-card">
+              <div class="pm-card-header">
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Projects You Led</h3>
+              </div>
+              <div class="pm-list mt-2">
+                <% createdFinished.forEach(proj => { %>
+                  <div class="pm-list-row">
+                    <div class="pm-list-main">
+                      <strong><%= proj.title %></strong>
+                      <div class="pm-list-meta"><%= proj.domain %></div>
+                    </div>
+                    <div class="text-end">
+                      <div class="pm-list-meta" style="font-size: 0.8rem;">
+                        Team: 
+                        <strong>
+                          <%= (proj.approved_users && proj.approved_users.length) || 0 %>
+                        </strong>
+                      </div>
+                      <div class="pm-list-meta" style="font-size: 0.75rem; color: var(--pm-subtext);">
+                        <%= new Date(proj.createdOn).toLocaleDateString() %>
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </article>
+          <% } else { %>
+            <article class="pm-card">
+              <div class="pm-card-header">
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Projects You Led</h3>
+              </div>
+              <p class="pm-list-meta mt-2">No completed projects yet</p>
+            </article>
+          <% } %>
+
+          <!-- Projects Joined -->
+          <% if (appliedFinished && appliedFinished.length > 0) { %>
+            <article class="pm-card">
+              <div class="pm-card-header">
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Projects You Joined</h3>
+              </div>
+              <div class="pm-list mt-2">
+                <% appliedFinished.forEach(proj => { %>
+                  <div class="pm-list-row">
+                    <div class="pm-list-main">
+                      <strong><%= proj.title %></strong>
+                      <div class="pm-list-meta"><%= proj.domain %></div>
+                    </div>
+                    <div class="text-end">
+                      <div class="pm-list-meta" style="font-size: 0.8rem;">
+                        Led by: 
+                        <strong style="font-size: inherit;">
+                          <% if (proj.createdBy && proj.createdBy.email) { %>
+                            <%= proj.createdBy.email.split('@')[0] %>
+                          <% } else { %>
+                            Unknown
+                          <% } %>
+                        </strong>
+                      </div>
+                      <div class="pm-list-meta" style="font-size: 0.75rem; color: var(--pm-subtext);">
+                        <%= new Date(proj.createdOn).toLocaleDateString() %>
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </article>
+          <% } else { %>
+            <article class="pm-card">
+              <div class="pm-card-header">
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Projects You Joined</h3>
+              </div>
+              <p class="pm-list-meta mt-2">No completed projects yet</p>
+            </article>
+          <% } %>
+        </div>
+
+        <% if ((!createdFinished || createdFinished.length === 0) && (!appliedFinished || appliedFinished.length === 0)) { %>
+          <div class="pm-empty-state" style="text-align: center; padding: 2rem 1rem;">
+            <p style="color: var(--pm-subtext); margin: 0;">No completed projects yet. Keep shipping! 🚢</p>
+          </div>
+        <% } %>
+      </div>
     </main>
 
     <%- include('./partials/footer') %>
     <%- include('./partials/scripts') %>
+    
+    <style>
+      .pm-projects-section {
+        margin-bottom: 2rem;
+      }
+
+      .pm-section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--pm-text);
+        letter-spacing: -0.5px;
+      }
+
+      .pm-card-active {
+        border: 1.5px solid rgba(139, 92, 246, 0.3);
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(168, 85, 247, 0.03) 100%);
+      }
+
+      .pm-card-active:hover {
+        border-color: rgba(139, 92, 246, 0.5);
+        box-shadow: 0 0 30px rgba(139, 92, 246, 0.1);
+      }
+
+      .pm-card-meta {
+        font-size: 0.85rem;
+        color: var(--pm-subtext);
+        margin-top: 0.25rem;
+      }
+
+      .pm-project-stats {
+        font-size: 0.85rem;
+      }
+
+      .pm-list-meta {
+        font-size: 0.75rem;
+        color: var(--pm-subtext);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+      }
+    </style>
   </body>
 </html>

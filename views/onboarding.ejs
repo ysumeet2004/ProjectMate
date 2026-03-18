@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head') %>
+  <title>Welcome to ProjectMate · Set up your profile</title>
+</head>
+<body class="pm-body">
+  <div class="pm-grid-overlay"></div>
+  
+  <%- include('./partials/navbar') %>
+
+  <main class="pm-page" style="max-width: 700px; margin: 0 auto; padding: 3rem 1.5rem;">
+    <!-- Progress Bar -->
+    <div style="margin-bottom: 2rem;">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+        <div class="onboarding-step active"></div>
+        <div class="onboarding-step"></div>
+        <div class="onboarding-step"></div>
+      </div>
+      <p style="color: var(--pm-subtext); font-size: 0.9rem;">Step <span id="currentStep">1</span> of 3</p>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div class="onboarding-screen active" id="step1">
+      <h1 class="pm-hero-title" style="margin-bottom: 1rem;">Welcome to ProjectMate! 🎉</h1>
+      <p class="pm-hero-subtitle" style="margin-bottom: 2rem;">Let's get you set up in 3 quick steps so you can start collaborating right away.</p>
+      
+      <button onclick="nextStep()" class="pm-btn pm-btn-primary w-100 justify-content-center" style="padding: 0.75rem;">
+        Let's Get Started →
+      </button>
+    </div>
+
+    <!-- Step 1: Complete Profile -->
+    <div class="onboarding-screen" id="step2">
+      <h2 style="color: var(--pm-text); margin-bottom: 1.5rem;">Complete Your Profile</h2>
+      <p style="color: var(--pm-subtext); margin-bottom: 2rem;">Help other creators get to know you better</p>
+
+      <form id="profileForm">
+        <div style="margin-bottom: 1.5rem;">
+          <label class="pm-form-label">Bio (Tell us about yourself)</label>
+          <textarea class="pm-input" name="bio" placeholder="e.g., Full-stack developer passionate about AI and startups" rows="3" required></textarea>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label class="pm-form-label">Skills (Comma-separated)</label>
+          <input type="text" class="pm-input" name="skills" placeholder="e.g., JavaScript, React, Node.js, Python" required>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label class="pm-form-label">Looking For (Multiple select)</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" name="lookingFor" value="side-projects">
+              <span>Side Projects</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" name="lookingFor" value="freelance">
+              <span>Freelance Work</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" name="lookingFor" value="co-founder">
+              <span>Co-founder</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" name="lookingFor" value="full-time">
+              <span>Full-time Role</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="button" onclick="nextStep()" class="pm-btn pm-btn-primary w-100 justify-content-center">
+          Continue →
+        </button>
+      </form>
+    </div>
+
+    <!-- Step 2: Preferences -->
+    <div class="onboarding-screen" id="step3">
+      <h2 style="color: var(--pm-text); margin-bottom: 1.5rem;">Choose Your Interests</h2>
+      <p style="color: var(--pm-subtext); margin-bottom: 2rem;">This helps us recommend better projects and collaborators</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+        <label class="interest-tag">
+          <input type="checkbox" name="interests" value="Web Development">
+          <span>🌐 Web Development</span>
+        </label>
+        <label class="interest-tag">
+          <input type="checkbox" name="interests" value="AI/ML">
+          <span>🤖 AI/ML</span>
+        </label>
+        <label class="interest-tag">
+          <input type="checkbox" name="interests" value="Mobile Apps">
+          <span>📱 Mobile Apps</span>
+        </label>
+        <label class="interest-tag">
+          <input type="checkbox" name="interests" value="Blockchain">
+          <span>⛓️ Blockchain</span>
+        </label>
+        <label class="interest-tag">
+          <input type="checkbox" name="interests" value="Game Development">
+          <span>🎮 Game Dev</span>
+        </label>
+        <label class="interest-tag">
+          <input type="checkbox" name="interests" value="Design">
+          <span>🎨 Design</span>
+        </label>
+      </div>
+
+      <button type="button" onclick="nextStep()" class="pm-btn pm-btn-primary w-100 justify-content-center">
+        Complete Setup →
+      </button>
+    </div>
+
+    <!-- Step 3: Completion -->
+    <div class="onboarding-screen" id="step4">
+      <div style="text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🚀</div>
+        <h2 style="color: var(--pm-text); margin-bottom: 0.5rem;">You're All Set!</h2>
+        <p class="pm-hero-subtitle" style="margin-bottom: 2rem;">Your profile is ready. Now let's find your next collaboration.</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <a href="/project/find" class="pm-btn pm-btn-primary justify-content-center">
+            Browse Projects
+          </a>
+          <a href="/project/create" class="pm-btn pm-btn-ghost justify-content-center">
+            Create Project
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <%- include('./partials/footer') %>
+  <%- include('./partials/scripts') %>
+
+  <style>
+    .onboarding-step {
+      width: 100%;
+      height: 4px;
+      background: var(--pm-border-subtle);
+      border-radius: 999px;
+      transition: background 0.3s ease;
+    }
+
+    .onboarding-step.active {
+      background: var(--pm-accent);
+    }
+
+    .onboarding-screen {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .onboarding-screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .interest-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border: 2px solid var(--pm-border-subtle);
+      border-radius: var(--pm-radius-lg);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .interest-tag:hover {
+      border-color: var(--pm-accent);
+      background: rgba(167, 139, 250, 0.05);
+    }
+
+    .interest-tag input {
+      width: 1.25rem;
+      height: 1.25rem;
+      cursor: pointer;
+    }
+
+    .interest-tag input:checked ~ span {
+      color: var(--pm-accent);
+      font-weight: 600;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        currentStep++;
+        document.getElementById(`step${currentStep}`).classList.add('active');
+        document.querySelectorAll('.onboarding-step')[currentStep - 1].classList.add('active');
+        document.getElementById('currentStep').textContent = Math.min(currentStep - 1, 3);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        currentStep--;
+        document.getElementById(`step${currentStep}`).classList.add('active');
+        document.querySelectorAll('.onboarding-step')[currentStep - 2].classList.remove('active');
+        document.getElementById('currentStep').textContent = Math.min(currentStep - 1, 3);
+      }
+    }
+  </script>
+</body>
+</html>

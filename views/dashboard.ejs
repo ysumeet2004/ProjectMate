@@ -2,84 +2,247 @@
 <html lang="en">
   <head>
     <%- include('./partials/head') %>
+    <link rel="stylesheet" href="/css/dashboard.css">
     <title>Dashboard · ProjectMate</title>
   </head>
   <body class="pm-body">
+    <canvas id="galaxy-bg"></canvas>
     <div class="pm-grid-overlay"></div>
 
     <%- include('./partials/navbar') %>
 
     <main class="pm-page">
-      <header class="pm-page-header">
-        <div>
-          <h1 class="pm-page-title">Hi, <%= user.name.split(' ')[0] %></h1>
-          <p class="pm-page-subtitle">
-            Jump back into your projects, track applications, or spin up something new — all from one place.
+      <!-- Hero Section -->
+      <section class="pm-hero-shell">
+        <div class="pm-hero-content">
+          <div class="pm-hero-kicker">
+            <span>👋 Welcome back</span>
+          </div>
+          <h1 class="pm-hero-title">
+            Hello, <span><%= user.name.split(' ')[0] %></span>!
+          </h1>
+          <p class="pm-hero-subtitle">
+            Ready to collaborate? Discover amazing projects, connect with talented creators, and build something incredible together.
           </p>
+          <div class="pm-hero-actions">
+            <a href="/project/find" class="pm-btn-hero-primary">
+              Browse Projects
+            </a>
+            <a href="/project/create" class="pm-btn-hero-secondary">
+              Create Project
+            </a>
+          </div>
         </div>
-      </header>
 
-      <section class="pm-section-grid">
-        <a href="/project/find" class="pm-card text-decoration-none text-reset">
-          <div class="pm-card-header">
-            <div class="pm-card-title">Find projects</div>
-            <span class="pm-tag">Browse live listings</span>
-          </div>
-          <p class="pm-card-subtitle">
-            Discover projects across web, mobile, AI/ML, and more. Filter by domain and apply in a click.
-          </p>
-        </a>
+        <!-- Stats Panel -->
+        <div class="pm-hero-panel">
+          <div class="pm-hero-panel-card">
+            <div class="pm-hero-panel-header">
+              <div class="pm-hero-panel-title">Your Activity</div>
+              <div class="pm-hero-panel-badge">This month</div>
+            </div>
 
-        <a href="/project/create" class="pm-card text-decoration-none text-reset">
-          <div class="pm-card-header">
-            <div class="pm-card-title">Create a project</div>
-            <span class="pm-tag">Lead a new team</span>
-          </div>
-          <p class="pm-card-subtitle">
-            Share a clear brief, required skills, and domain so the right collaborators can find you fast.
-          </p>
-        </a>
+            <div class="pm-hero-stats-grid">
+              <div class="pm-hero-stat-card">
+                <div class="pm-hero-stat-label">Projects Applied</div>
+                <div class="pm-hero-stat-value"><%= stats.projectsJoined %></div>
+                <div class="pm-hero-stat-delta"><%= stats.projectsJoined > 0 ? '🔥 Active' : 'Browse now' %></div>
+              </div>
+              <div class="pm-hero-stat-card">
+                <div class="pm-hero-stat-label">Projects Created</div>
+                <div class="pm-hero-stat-value"><%= stats.projectsCreated %></div>
+                <div class="pm-hero-stat-delta"><%= stats.projectsCreated > 0 ? 'Great progress!' : 'Create first' %></div>
+              </div>
+              <div class="pm-hero-stat-card">
+                <div class="pm-hero-stat-label">Collaborations</div>
+                <div class="pm-hero-stat-value"><%= stats.completedProjects %></div>
+                <div class="pm-hero-stat-delta"><%= stats.completedProjects > 0 ? '✨ Completed' : 'Work in progress' %></div>
+              </div>
+            </div>
 
-        <a href="/project/applications" class="pm-card text-decoration-none text-reset">
-          <div class="pm-card-header">
-            <div class="pm-card-title">My applications</div>
-            <span class="pm-tag">Stay on top of responses</span>
+            <div class="pm-hero-footer-row">
+              <span class="pm-hero-footer-text">Keep up the great work! 🚀</span>
+              <a href="/project/history" class="pm-hero-footer-link">View all activity →</a>
+            </div>
           </div>
-          <p class="pm-card-subtitle">
-            Review where you’ve applied, see statuses, and follow up on the most promising matches.
-          </p>
-        </a>
-
-        <a href="/project/show" class="pm-card text-decoration-none text-reset">
-          <div class="pm-card-header">
-            <div class="pm-card-title">My projects</div>
-            <span class="pm-tag">Manage incoming interest</span>
-          </div>
-          <p class="pm-card-subtitle">
-            View open projects you own, evaluate applicants, and decide who to bring into your team.
-          </p>
-        </a>
-
-        <a href="/user/profile" class="pm-card text-decoration-none text-reset">
-          <div class="pm-card-header">
-            <div class="pm-card-title">My profile</div>
-            <span class="pm-tag">Keep your signal high</span>
-          </div>
-          <p class="pm-card-subtitle">
-            Make it easy to understand your skills and what you want to work on next.
-          </p>
-        </a>
-
-        <a href="/project/history" class="pm-card text-decoration-none text-reset">
-          <div class="pm-card-header">
-            <div class="pm-card-title">Project history</div>
-            <span class="pm-tag">Look back on wins</span>
-          </div>
-          <p class="pm-card-subtitle">
-            See finished collaborations and refer back to what you’ve shipped with your teams.
-          </p>
-        </a>
+        </div>
       </section>
+
+      <!-- CURRENT PROJECTS TRACKER -->
+      <% 
+        const hasActiveProjects = (typeof activeProjectsCreated !== 'undefined' && activeProjectsCreated && activeProjectsCreated.length > 0) || 
+                                  (typeof activeProjectsJoined !== 'undefined' && activeProjectsJoined && activeProjectsJoined.length > 0);
+      %>
+      <% if (hasActiveProjects) { %>
+      <section class="pm-projects-section">
+        <h2 class="pm-section-title">🚀 Your Active Projects</h2>
+        <div class="pm-projects-grid">
+          
+          <!-- Projects Created -->
+          <% if (typeof activeProjectsCreated !== 'undefined' && activeProjectsCreated && activeProjectsCreated.length > 0) { %>
+            <% activeProjectsCreated.forEach(proj => { %>
+              <article class="pm-card" style="border: 1.5px solid rgba(139, 92, 246, 0.3); background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(168, 85, 247, 0.03) 100%);">
+                <div class="pm-card-header" style="align-items: flex-start;">
+                  <div style="flex: 1;">
+                    <div class="pm-card-title"><%= proj.title %></div>
+                    <div class="pm-card-subtitle"><%= proj.domain %></div>
+                  </div>
+                  <span class="pm-status-badge pm-status-<%= proj.status.toLowerCase() === 'open' ? 'open' : proj.status.toLowerCase() === 'in_progress' ? 'in-progress' : 'finished' %> pm-tooltip" data-tooltip="<%= proj.status === 'OPEN' ? 'Accepting applicants' : proj.status === 'IN_PROGRESS' ? 'Currently active' : 'Project completed' %>">
+                    <%= proj.status %>
+                  </span>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--pm-border-subtle);">
+                  <div class="pm-tooltip" data-tooltip="<%= new Date(proj.createdOn).toLocaleDateString() %>">
+                    📅 Created <%= new Date(proj.createdOn).toLocaleDateString() %>
+                  </div>
+                  <a href="/project/<%= proj._id %>/applicants" class="pm-btn-manage-team pm-tooltip" data-tooltip="View and manage your team" style="font-size: 0.85rem; padding: 0.5rem 1rem; margin-top: 0.75rem;">
+                    Manage Team
+                  </a>
+                </div>
+              </article>
+            <% }) %>
+          <% } %>
+
+          <!-- Projects Joined -->
+          <% if (typeof activeProjectsJoined !== 'undefined' && activeProjectsJoined && activeProjectsJoined.length > 0) { %>
+            <% activeProjectsJoined.forEach(proj => { %>
+              <article class="pm-card" style="border: 1.5px solid rgba(34, 197, 94, 0.3); background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(74, 222, 128, 0.03) 100%);">
+                <div class="pm-card-header" style="align-items: flex-start;">
+                  <div style="flex: 1;">
+                    <div class="pm-card-title"><%= proj.title %></div>
+                    <div class="pm-card-subtitle"><%= proj.domain %></div>
+                  </div>
+                  <span style="background: rgba(34, 197, 94, 0.2); color: #22c55e; padding: 0.35rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; white-space: nowrap;">
+                    Approved ✓
+                  </span>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--pm-border-subtle);">
+                  <div style="font-size: 0.8rem; color: var(--pm-subtext); margin-bottom: 0.5rem;">
+                    👤 Led by 
+                    <strong>
+                      <% if (proj.createdBy && proj.createdBy.email) { %>
+                        <%= proj.createdBy.email.split('@')[0] %>
+                      <% } else { %>
+                        Unknown
+                      <% } %>
+                    </strong>
+                  </div>
+                  <div style="font-size: 0.8rem; color: var(--pm-subtext); margin-bottom: 0.75rem;">
+                    📅 <%= new Date(proj.createdOn).toLocaleDateString() %>
+                  </div>
+                </div>
+              </article>
+            <% }) %>
+          <% } %>
+        </div>
+        <div class="pm-projects-footer">
+          <a href="/project/history" class="pm-projects-view-all">
+            View all projects →
+          </a>
+        </div>
+      </section>
+      <% } %>
+
+      <!-- Value Proposition Section -->
+      <section style="padding: 4rem 1.5rem; background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%); margin-top: 3rem;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 3rem;">
+            <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem;">Why thousands choose ProjectMate</h2>
+            <p style="color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto; font-size: 1.1rem;">We've spent years perfecting how creative minds connect and collaborate. Here's what makes us different.</p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <!-- Benefit Card 1 -->
+            <div style="background: rgba(15, 15, 15, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 2rem; border-radius: 12px;">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 40px; height: 40px; background: rgba(168, 85, 247, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🎯</div>
+                <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0;">Smart Matching</h3>
+              </div>
+              <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.6;">Our algorithm understands your skills, goals, and work style. Find collaborators who are genuinely aligned with your vision—not just anyone with a portfolio.</p>
+            </div>
+
+            <!-- Benefit Card 2 -->
+            <div style="background: rgba(15, 15, 15, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 2rem; border-radius: 12px;">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 40px; height: 40px; background: rgba(236, 72, 153, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🚀</div>
+                <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0;">Built-in Tools</h3>
+              </div>
+              <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.6;">Messaging, project tracking, collaboration features—everything you need is built right in. No switching between 5 different apps. Just one platform that works.</p>
+            </div>
+
+            <!-- Benefit Card 3 -->
+            <div style="background: rgba(15, 15, 15, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 2rem; border-radius: 12px;">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 40px; height: 40px; background: rgba(6, 182, 212, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🤝</div>
+                <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0;">Real Community</h3>
+              </div>
+              <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.6;">This isn't just a marketplace. It's a community of makers who support each other. Share learnings, celebrate wins, and grow together beyond individual projects.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials Section -->
+      <section style="padding: 4rem 1.5rem; margin-top: 3rem;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+          <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 3rem; text-align: center;">Stories from our community</h2>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+            <!-- Testimonial 1 -->
+            <div style="background: rgba(15, 15, 15, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 2rem; border-radius: 12px;">
+              <div style="display: flex; gap: 0.3rem; margin-bottom: 1rem;">⭐⭐⭐⭐⭐</div>
+              <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; font-style: italic;">"ProjectMate saved me months of searching. I found three collaborators within a week—designers, developers, and a marketer. We shipped our MVP in 8 weeks."</p>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #a855f7, #ec4899); border-radius: 50%;"></div>
+                <div>
+                  <div style="font-weight: 600; font-size: 0.9rem;">Sarah Chen</div>
+                  <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Founder, Design Studio</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div style="background: rgba(15, 15, 15, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 2rem; border-radius: 12px;">
+              <div style="display: flex; gap: 0.3rem; margin-bottom: 1rem;">⭐⭐⭐⭐⭐</div>
+              <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; font-style: italic;">"As a solo developer, finding the right people to work with was the hardest part. ProjectMate completely changed that. The quality of matches is exceptional."</p>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #06b6d4, #8b5cf6); border-radius: 50%;"></div>
+                <div>
+                  <div style="font-weight: 600; font-size: 0.9rem;">Marcus Johnson</div>
+                  <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Full-Stack Engineer</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div style="background: rgba(15, 15, 15, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 2rem; border-radius: 12px;">
+              <div style="display: flex; gap: 0.3rem; margin-bottom: 1rem;">⭐⭐⭐⭐⭐</div>
+              <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; font-style: italic;">"Not just a tool—it's a community. The people here elevate each other. I've made real friends and amazing collaborators through ProjectMate."</p>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ec4899, #f59e0b); border-radius: 50%;"></div>
+                <div>
+                  <div style="font-weight: 600; font-size: 0.9rem;">Emma Rodriguez</div>
+                  <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Product Designer & Founder</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Engagement CTA Section -->
+      <section style="padding: 4rem 1.5rem; margin-top: 3rem; text-align: center;">
+        <div style="max-width: 800px; margin: 0 auto;">
+          <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem;">Time to grow your network?</h2>
+          <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.6;">Explore amazing projects happening right now, or start your own and find your perfect team match.</p>
+          
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/project/find" class="pm-btn pm-btn-primary" style="padding: 0.9rem 2rem; font-size: 1rem;">Browse Projects</a>
+            <a href="/project/create" class="pm-btn pm-btn-secondary-new" style="padding: 0.9rem 2rem; font-size: 1rem;">Create New Project</a>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <%- include('./partials/footer') %>

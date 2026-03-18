@@ -1,0 +1,558 @@
+/* Mobile Responsiveness Improvements */
+
+/* ============ TABLETS (768px and below) ============ */
+
+@media (max-width: 768px) {
+  :root {
+    --pm-radius-lg: 12px;
+    --pm-radius-xl: 16px;
+  }
+
+  body.pm-body {
+    font-size: 15px;
+  }
+
+  /* --- NAVBAR --- */
+  .pm-navbar-inner {
+    padding: 0.75rem 1rem;
+    gap: 1rem;
+  }
+
+  .pm-navbar-logo {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .pm-navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  .pm-nav-link {
+    font-size: 0.95rem;
+    padding: 0;
+  }
+
+  .pm-navbar-right .pm-btn {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  /* --- HERO SECTION --- */
+  .pm-hero-shell {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding: 2rem 1.5rem 1.5rem !important;
+  }
+
+  .pm-hero-title {
+    font-size: clamp(1.8rem, 5vw, 2.4rem);
+  }
+
+  .pm-hero-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .pm-hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .pm-hero-actions a,
+  .pm-hero-actions button {
+    width: 100%;
+  }
+
+  /* Hide hero visual on mobile */
+  .pm-hero-visual {
+    display: none !important;
+  }
+
+  .pm-hero-panel {
+    display: none !important;
+  }
+
+  /* --- BUTTONS --- */
+  .pm-btn {
+    padding: 0.65rem 1.2rem !important;
+    font-size: 0.95rem;
+    min-height: 44px; /* Touch target */
+  }
+
+  .pm-btn.w-100 {
+    width: 100%;
+  }
+
+  /* --- CARDS --- */
+  .pm-card {
+    padding: 1rem;
+  }
+
+  .pm-card-header {
+    gap: 0.75rem;
+  }
+
+  .pm-card-title {
+    font-size: 1rem;
+  }
+
+  .pm-card-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .pm-card-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  /* --- GRIDS --- */
+  .pm-section-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* --- INPUTS --- */
+  .pm-input,
+  .pm-select {
+    padding: 0.65rem 0.9rem;
+    font-size: 1rem; /* Prevents zoom on iOS */
+  }
+
+  .pm-form-label {
+    font-size: 0.9rem;
+  }
+
+  .pm-field-help {
+    font-size: 0.8rem;
+  }
+
+  /* --- MODALS & OVERLAYS --- */
+  .pm-modal {
+    margin: 1rem;
+  }
+
+  /* --- BANNER & ALERTS --- */
+  .pm-error-banner,
+  .pm-success-banner,
+  .pm-warning-banner {
+    padding: 0.875rem;
+    gap: 0.5rem;
+  }
+
+  .pm-error-banner-icon,
+  .pm-success-banner-icon,
+  .pm-warning-banner-icon {
+    font-size: 1.1rem;
+  }
+
+  .pm-error-banner-message,
+  .pm-success-banner-message,
+  .pm-warning-banner-message {
+    font-size: 0.9rem;
+  }
+
+  /* --- FORMS --- */
+  form textarea {
+    min-height: 100px;
+  }
+
+  /* --- TABLES (if needed) --- */
+  table {
+    font-size: 0.9rem;
+  }
+
+  thead {
+    font-size: 0.85rem;
+  }
+}
+
+/* ============ MOBILE PHONES (480px and below) ============ */
+
+@media (max-width: 480px) {
+  :root {
+    --pm-radius-lg: 10px;
+    --pm-radius-xl: 14px;
+  }
+
+  body.pm-body {
+    font-size: 14px;
+  }
+
+  /* --- NAVBAR --- */
+  .pm-navbar {
+    position: sticky;
+    z-index: 40;
+  }
+
+  .pm-navbar-inner {
+    padding: 0.6rem 0.8rem;
+    gap: 0.5rem;
+  }
+
+  .pm-navbar-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .pm-navbar-brand {
+    font-size: 1rem;
+  }
+
+  .pm-navbar-center {
+    gap: 1rem;
+  }
+
+  .pm-nav-link {
+    font-size: 0.9rem;
+  }
+
+  .pm-navbar-right {
+    gap: 0.5rem;
+  }
+
+  .pm-navbar-right .pm-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  /* --- PAGE CONTENT --- */
+  .pm-page {
+    padding: 0 !important;
+  }
+
+  .pm-hero-shell {
+    padding: 1.5rem 1rem !important;
+    gap: 1.5rem !important;
+  }
+
+  .pm-hero-title {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .pm-hero-kicker {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  .pm-hero-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 100%;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* --- BUTTONS --- */
+  .pm-btn {
+    padding: 0.6rem 1rem !important;
+    font-size: 0.9rem;
+    min-height: 40px; /* Touch target */
+    border-radius: 8px;
+  }
+
+  .pm-hero-actions {
+    gap: 0.5rem;
+  }
+
+  /* --- CARDS --- */
+  .pm-card {
+    padding: 0.85rem;
+    margin: 0 1rem 0.75rem;
+    border-radius: 10px;
+  }
+
+  .pm-card-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pm-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .pm-card-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .pm-card-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .pm-pill {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* --- GRIDS --- */
+  .pm-section-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    padding: 0 1rem;
+    margin: 1rem 0;
+  }
+
+  /* --- INPUTS --- */
+  .pm-input,
+  .pm-select {
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem; /* Prevents zoom on iOS */
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  .pm-form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+
+  .pm-field-help {
+    font-size: 0.75rem;
+    margin-top: 0.35rem;
+  }
+
+  /* --- FORMS --- */
+  form {
+    padding: 0 1rem;
+  }
+
+  .pm-card.mb-4 {
+    margin-bottom: 1rem !important;
+  }
+
+  form textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  /* --- BANNERS & ALERTS --- */
+  .pm-error-banner,
+  .pm-success-banner,
+  .pm-warning-banner {
+    padding: 0.75rem;
+    gap: 0.5rem;
+    margin: 0 1rem 1rem;
+    border-radius: 8px;
+  }
+
+  .pm-error-banner-icon,
+  .pm-success-banner-icon,
+  .pm-warning-banner-icon {
+    font-size: 1rem;
+    min-width: 24px;
+  }
+
+  .pm-error-banner-title,
+  .pm-success-banner-title,
+  .pm-warning-banner-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .pm-error-banner-message,
+  .pm-success-banner-message,
+  .pm-warning-banner-message {
+    font-size: 0.8rem;
+  }
+
+  /* --- EMPTY STATES --- */
+  .pm-empty-state {
+    min-height: 250px;
+    padding: 1.5rem 1rem;
+    margin: 1rem;
+  }
+
+  .pm-empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .pm-empty-state-title {
+    font-size: 1.1rem;
+  }
+
+  .pm-empty-state-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .pm-empty-state-actions {
+    width: 100%;
+  }
+
+  .pm-empty-state-actions a,
+  .pm-empty-state-actions button {
+    width: 100%;
+    min-width: auto;
+  }
+
+  /* --- BADGES --- */
+  .pm-badge {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .pm-badge-group {
+    gap: 0.4rem;
+  }
+
+  /* --- LOADING SPINNER --- */
+  .pm-loading-spinner {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  /* --- HEADER --- */
+  .pm-page-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .pm-page-title {
+    font-size: 1.5rem;
+  }
+
+  .pm-page-subtitle {
+    font-size: 0.9rem;
+  }
+
+  /* --- FLEX UTILITY IMPROVEMENTS --- */
+  .d-flex {
+    display: flex;
+  }
+
+  .flex-column {
+    flex-direction: column;
+  }
+
+  .gap-2 {
+    gap: 0.5rem !important;
+  }
+
+  .gap-3 {
+    gap: 0.75rem !important;
+  }
+
+  .mt-2 {
+    margin-top: 0.5rem;
+  }
+
+  .mt-3 {
+    margin-top: 0.75rem;
+  }
+
+  .mb-2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+
+  /* --- BOTTOM PADDING FOR FIXED FOOTERS --- */
+  .pm-page {
+    padding-bottom: 80px;
+  }
+
+  /* --- FOOTER ON MOBILE --- */
+  footer {
+    padding: 1.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  footer a {
+    display: block;
+    margin: 0.5rem 0;
+  }
+}
+
+/* ============ SMALL PHONES (360px and below) ============ */
+
+@media (max-width: 360px) {
+  .pm-hero-title {
+    font-size: 1.3rem;
+  }
+
+  .pm-card {
+    padding: 0.75rem;
+  }
+
+  .pm-btn {
+    padding: 0.55rem 0.9rem !important;
+    font-size: 0.85rem;
+  }
+
+  .pm-input,
+  .pm-select {
+    padding: 0.55rem 0.7rem;
+    font-size: 1rem;
+  }
+
+  .pm-section-grid {
+    padding: 0 0.75rem !important;
+  }
+
+  form {
+    padding: 0 0.75rem;
+  }
+
+  .pm-navbar-brand {
+    font-size: 0.9rem;
+  }
+}
+
+/* ============ LANDSCAPE MODE ============ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .pm-hero-shell {
+    padding: 1rem 1.5rem !important;
+    gap: 1rem !important;
+  }
+
+  .pm-hero-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .pm-hero-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .pm-hero-actions {
+    gap: 0.5rem;
+  }
+
+  .pm-btn {
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+/* ============ TOUCH DEVICE IMPROVEMENTS ============ */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .pm-btn:hover {
+    transform: none;
+  }
+
+  .pm-card-hover:hover {
+    transform: none;
+    box-shadow: var(--pm-shadow);
+  }
+
+  /* Add active state instead */
+  .pm-btn:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+
+  .pm-card-hover:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
