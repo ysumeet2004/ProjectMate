@@ -11,9 +11,9 @@
     <p class="pm-card-subtitle mb-2">
       <strong>Skills Required:</strong> 
       <% if (typeof project.skills_req === 'object' && project.skills_req.join) { %>
-        <%= project.skills_req.map(s => '<span class="pm-skill-tag">' + s.trim() + '</span>').join('') %>
+        <%-  project.skills_req.map(s => '<span class="pm-skill-tag">' + s.trim() + '</span>').join('') %>
       <% } else if (typeof project.skills_req === 'string') { %>
-        <%= project.skills_req.split(',').map(s => '<span class="pm-skill-tag">' + s.trim() + '</span>').join('') %>
+        <%-  project.skills_req.split(',').map(s => '<span class="pm-skill-tag">' + s.trim() + '</span>').join('') %>
       <% } else { %>
         None specified
       <% } %>
